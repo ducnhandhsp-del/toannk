@@ -1,0 +1,299 @@
+/**
+ * OperationsTab.tsx — v27.1
+ * ✅ Thống kê vắng: filters inline với sub-tab header
+ * ✅ AppTable cho tất cả bảng
+ * ✅ StatBlock cho Thống kê vắng
+ */
+import React, { useState, useMemo } from 'react';
+import { BookOpen, Calendar, AlertTriangle, Eye, Edit3, Clock, Phone } from 'lucide-react';
+import { formatDate, parseDMY } from './helpers';
+import { Badge, Pager, FilterTabs, SearchBar, Select, TableActions } from './design-system/src';
+import { FAB } from './FAB';
+import { StatBlock, StatGrid, AppTable, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
+import type { Student } from './types';
+
+type Sub = 'diary' | 'schedule' | 'absence';
+const SUBS = [
+  { id: 'diary'    as Sub, label: 'Nhật ký giảng dạy', icon: BookOpen    },
+  { id: 'schedule' as Sub, label: 'Lịch dạy',           icon: Calendar   },
+  { id: 'absence'  as Sub, label: 'Thống kê vắng',      icon: AlertTriangle },
+];
+
+const DAYS     = ['T2','T3','T4','T5','T6','T7','CN'];
+const DAY_FULL: Record<string, string> = { T2:'Thứ 2',T3:'Thứ 3',T4:'Thứ 4',T5:'Thứ 5',T6:'Thứ 6',T7:'Thứ 7',CN:'Chủ nhật' };
+const CA_SLOTS = ['7h30','9h','13h30','15h30','17h30','19h30'];
+const CA_MINS  = [7*60+30, 9*60, 13*60+30, 15*60+30, 17*60+30, 19*60+30];
+
+function parseBuoi(v: string) {
+  if (!v) return null;
+  const parts = v.trim().split(/\s+/);
+  const day = parts[0];
+  if (!DAYS.includes(day)) return null;
+  const m = parts.slice(1).join(' ').match(/(\d+)[h:]/);
+  if (!m) return null;
+  const h = parseInt(m[1]);
+  const m2 = parts.slice(1).join(' ').match(/[h:](\d{2})/);
+  const min = m2 ? parseInt(m2[1]) : 0;
+  const total = h * 60 + min;
+  let best = 0, bestDiff = Infinity;
+  CA_MINS.forEach((cm, i) => { const d = Math.abs(total - cm); if (d < bestDiff) { bestDiff = d; best = i; } });
+  return { day, caIdx: best };
+}
+
+function TeacherTimetable({ teacherName, uClasses }: { teacherName: string; uClasses: any[] }) {
+  const myClasses = uClasses.filter(c => String(c['Giáo viên'] || '').toLowerCase().includes(teacherName.split(' ').pop()!.toLowerCase()));
+  const grid: Record<number, Record<string, { classId: string }[]>> = {};
+  CA_SLOTS.forEach((_, i) => { grid[i] = {}; DAYS.forEach(d => { grid[i][d] = []; }); });
+  myClasses.forEach(c => { ['Buổi 1','Buổi 2','Buổi 3'].forEach(b => { const p = parseBuoi(c[b] || ''); if (p) grid[p.caIdx][p.day].push({ classId: c['Mã Lớp'] }); }); });
+
+  return (
+    <div style={{ border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+      <div style={{ padding: '10px 14px', background: 'linear-gradient(135deg,#0f1f3d,#1e3a5f)', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.12)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookOpen size={13} color="white" /></div>
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 700, color: 'white', margin: 0 }}>TKB — {teacherName}</p>
+          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: 0 }}>{myClasses.length} lớp phụ trách</p>
+        </div>
+      </div>
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}>
+          <thead>
+            <tr>
+              <th style={{ ...TH_SHARED, width: 68, textAlign: 'left' }}>Ca học</th>
+              {DAYS.map(d => <th key={d} style={{ ...TH_SHARED, textAlign: 'center' }}>{DAY_FULL[d] || d}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {CA_SLOTS.map((ca, ci) => (
+              <tr key={ca} style={trStyle(ci)}>
+                <td style={{ ...TD_SHARED, padding: '8px 12px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#6366f1' }}>
+                    <Clock size={10} color="#6366f1" />{ca}
+                  </span>
+                </td>
+                {DAYS.map(d => {
+                  const cells = grid[ci][d] || [];
+                  return (
+                    <td key={d} style={{ ...TD_SHARED, textAlign: 'center', padding: '7px 5px' }}>
+                      {cells.length === 0
+                        ? <span style={{ color: '#e2e8f0', fontSize: 15 }}>—</span>
+                        : cells.map((cell, k) => (
+                          <div key={k} style={{ display: 'inline-block', background: '#eef2ff', border: '1px solid #c7d2fe', padding: '3px 9px', margin: 2 }}>
+                            <p style={{ fontSize: 11, fontWeight: 800, color: '#4338ca', margin: 0 }}>{cell.classId}</p>
+                          </div>
+                        ))
+                      }
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+interface Props {
+  filtD: any[]; pgD: number; setPgD: (p: number) => void;
+  qD: string; setQD: (v: string) => void;
+  dCls: string; setDCls: (v: string) => void;
+  uClasses: any[]; IPP: number; students: Student[]; tlogs: any[];
+  leaveRequests: any[];
+  onViewDiary: (log: any) => void; onEditDiary: (log: any) => void; onAddDiary: () => void;
+  onApproveLeave: (id: string) => void; onRejectLeave: (id: string) => void;
+}
+
+export default function OperationsTab({ filtD, pgD, setPgD, qD, setQD, dCls, setDCls, uClasses, IPP, students, tlogs, onViewDiary, onEditDiary, onAddDiary }: Props) {
+  const [sub, setSub] = useState<Sub>('diary');
+  const [absSearch, setAbsSearch] = useState('');
+  const [absClass, setAbsClass]   = useState('');
+  const [absSort, setAbsSort]     = useState<'absent' | 'late' | 'name'>('absent');
+
+  const paged = filtD.slice((pgD - 1) * IPP, pgD * IPP);
+  const [hovIdx, setHovIdx] = useState<number | null>(null);
+
+  const teachers = useMemo(() => { const s = new Set<string>(); uClasses.forEach(c => { if (c['Giáo viên'] && c['Giáo viên'] !== '---') s.add(c['Giáo viên']); }); return [...s]; }, [uClasses]);
+  const classOptions = [{ value: '', label: 'Tất cả lớp' }, ...uClasses.map(c => ({ value: c['Mã Lớp'], label: c['Mã Lớp'] }))];
+
+  /* Absence stats */
+  const absStats = useMemo(() => {
+    const map = new Map<string, { id: string; name: string; classId: string; parentPhone: string; absent: number; late: number; present: number; streak: number }>();
+    students.filter(s => s.status !== 'inactive' && (!s.endDate || s.endDate === '---' || s.endDate === '')).forEach(s => map.set(s.id, { id: s.id, name: s.name, classId: s.classId, parentPhone: s.parentPhone || '', absent: 0, late: 0, present: 0, streak: 0 }));
+    tlogs.forEach(log => (log.attendanceList || []).forEach((a: any) => { const row = map.get(a.maHS || a['Mã HS']); if (!row) return; const st = a['Trạng thái'] || ''; if (st === 'Vắng') row.absent++; else if (st === 'Muộn') row.late++; else row.present++; }));
+    students.forEach(s => { const row = map.get(s.id); if (!row) return; const logs = tlogs.filter(l => l.classId === s.classId).slice(0, 10); let streak = 0; for (const log of logs) { const a = (log.attendanceList || []).find((a: any) => (a.maHS || a['Mã HS']) === s.id); if (a && a['Trạng thái'] === 'Vắng') streak++; else if (a) break; } row.streak = streak; });
+    return [...map.values()];
+  }, [students, tlogs]);
+
+  const absClasses = [...new Set(absStats.map(r => r.classId))].sort();
+  const filtAbs = useMemo(() => {
+    const q = absSearch.toLowerCase();
+    return absStats.filter(r => (!q || r.name.toLowerCase().includes(q) || r.id.toLowerCase().includes(q)) && (!absClass || r.classId === absClass)).sort((a, b) => absSort === 'absent' ? b.absent - a.absent : absSort === 'late' ? b.late - a.late : a.name.localeCompare(b.name));
+  }, [absStats, absSearch, absClass, absSort]);
+
+  const totalA = absStats.reduce((s, r) => s + r.absent, 0);
+  const totalL = absStats.reduce((s, r) => s + r.late, 0);
+  const withA  = absStats.filter(r => r.absent > 0).length;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+      {/* ── Header row — sub-tabs + (diary filters) + (absence filters inline) ── */}
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+        <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0, flexShrink: 0 }}>Vận hành</h2>
+        <span style={{ width: 1, height: 22, background: '#e2e8f0', flexShrink: 0 }} />
+
+        {/* Sub-tab switcher */}
+        <div style={{ padding: 3, background: '#f1f5f9' }}>
+          <FilterTabs variant="segment" size="sm" active={sub} onChange={id => setSub(id as Sub)}
+            tabs={SUBS.map(s => ({ id: s.id, label: s.label, icon: <s.icon size={12} /> }))} />
+        </div>
+
+        {/* Diary filters */}
+        {sub === 'diary' && (<>
+          <span style={{ width: 1, height: 22, background: '#e2e8f0', flexShrink: 0 }} />
+          <SearchBar value={qD} onChange={v => { setQD(v); setPgD(1); }} placeholder="Tìm lớp, nội dung..." width={200} />
+          <Select value={dCls} onChange={v => { setDCls(v); setPgD(1); }} options={classOptions} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b', background: '#f1f5f9', padding: '6px 12px', borderRadius: 6, flexShrink: 0 }}>{filtD.length} buổi</span>
+        </>)}
+
+        {/* Absence filters — inline with header */}
+        {sub === 'absence' && (<>
+          <span style={{ width: 1, height: 22, background: '#e2e8f0', flexShrink: 0 }} />
+          <SearchBar value={absSearch} onChange={setAbsSearch} placeholder="Tìm học sinh..." width={180} />
+          <Select value={absClass} onChange={setAbsClass} options={[{ value: '', label: 'Tất cả lớp' }, ...absClasses.map(c => ({ value: c, label: c }))]} />
+          <Select value={absSort} onChange={v => setAbsSort(v as any)} options={[{ value: 'absent', label: 'Vắng nhiều nhất' }, { value: 'late', label: 'Muộn nhiều nhất' }, { value: 'name', label: 'Tên A-Z' }]} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b', background: '#f1f5f9', padding: '6px 10px', borderRadius: 6, flexShrink: 0 }}>{filtAbs.length} HS</span>
+        </>)}
+      </div>
+
+      {/* ── DIARY TABLE ── */}
+      {sub === 'diary' && (
+        <div style={TABLE_WRAP}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
+              <thead>
+                <tr>
+                  {['Ngày', 'Lớp', 'Ca dạy', 'Nội dung bài dạy', 'Có mặt', 'Vắng', 'Thao tác'].map((h, i) => (
+                    <th key={h} style={{ ...TH_SHARED, textAlign: i >= 4 ? 'center' : 'left' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {paged.length === 0
+                  ? <tr><td colSpan={7} style={{ padding: '52px 16px', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                        <span style={{ fontSize: 36 }}>📖</span>
+                        <p style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 14, margin: 0 }}>Chưa có nhật ký nào</p>
+                        <button onClick={onAddDiary} style={{ padding: '7px 18px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 6 }}>+ Ghi buổi đầu tiên</button>
+                      </div>
+                    </td></tr>
+                  : paged.map((l, i) => (
+                    <tr key={i} onMouseEnter={() => setHovIdx(i)} onMouseLeave={() => setHovIdx(null)} style={trStyle(i, hovIdx === i)}>
+                      <td style={{ ...TD_SHARED, fontSize: 12, color: '#475569', fontWeight: 600 }}>{formatDate(l.date)}</td>
+                      <td style={TD_SHARED}><Badge color="indigo">{l.classId}</Badge></td>
+                      <td style={TD_SHARED}>
+                        {l.caDay ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', padding: '2px 8px' }}><Clock size={10} color="#b45309" />{l.caDay}</span> : <span style={{ color: '#cbd5e1' }}>—</span>}
+                      </td>
+                      <td style={{ ...TD_SHARED, maxWidth: 240 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, margin: 0, lineHeight: 1.4 }}>{l.content}</p>
+                        {l.homework && l.homework !== '---' && <p style={{ fontSize: 11, color: '#94a3b8', margin: '2px 0 0' }}>📖 {l.homework}</p>}
+                      </td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, background: '#ecfdf5', fontWeight: 800, color: '#059669', fontSize: 14 }}>{l.present}</span></td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, background: '#fff1f2', fontWeight: 800, color: '#e11d48', fontSize: 14 }}>{l.absent}</span></td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center' }}>
+                        <TableActions compact actions={[
+                          { icon: <Eye size={13} />, label: 'Xem', intent: 'primary', onClick: () => onViewDiary(l) },
+                          { icon: <Edit3 size={13} />, label: 'Sửa', intent: 'warning', onClick: () => onEditDiary(l) },
+                        ]} />
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <div style={{ borderTop: '1px solid #f1f5f9', background: '#fafafa' }}>
+            <Pager page={pgD} total={filtD.length} perPage={IPP} setPage={setPgD} showTotal />
+          </div>
+        </div>
+      )}
+
+      {/* ── SCHEDULE ── */}
+      {sub === 'schedule' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {teachers.length === 0
+            ? <div style={{ textAlign: 'center', padding: '48px 0', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có dữ liệu lớp</div>
+            : teachers.map(t => <TeacherTimetable key={t} teacherName={t} uClasses={uClasses} />)
+          }
+        </div>
+      )}
+
+      {/* ── ABSENCE ── */}
+      {sub === 'absence' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* Stat blocks */}
+          <StatGrid>
+            <StatBlock icon={AlertTriangle} value={withA}  label="HS có buổi vắng" sub="trong tổng số HS active"  gradient="linear-gradient(135deg,#f43f5e,#e11d48)" />
+            <StatBlock icon={AlertTriangle} value={totalA} label="Tổng buổi vắng"   sub="toàn bộ ghi nhận"         gradient="linear-gradient(135deg,#f97316,#ea580c)" />
+            <StatBlock icon={Clock}         value={totalL} label="Tổng buổi muộn"   sub="toàn bộ ghi nhận"         gradient="linear-gradient(135deg,#f59e0b,#d97706)" />
+          </StatGrid>
+
+          {/* Absence table */}
+          <div style={TABLE_WRAP}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
+                <thead>
+                  <tr>
+                    <th style={{ ...TH_SHARED, width: 36, textAlign: 'center' }}>#</th>
+                    <th style={TH_SHARED}>Học sinh</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Lớp</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Vắng</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Muộn</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Có mặt</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Vắng liên tiếp</th>
+                    <th style={{ ...TH_SHARED, textAlign: 'center' }}>Liên hệ PH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtAbs.length === 0
+                    ? <tr><td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>🎉 Chưa có dữ liệu vắng</td></tr>
+                    : filtAbs.map((r, i) => {
+                      const ph = String(r.parentPhone || '').replace(/\D/g, '');
+                      const isH = r.absent >= 5 || r.streak >= 3, isM = r.absent >= 3 || r.streak >= 2;
+                      return (
+                        <tr key={r.id} style={{ background: isH ? '#fff1f2' : isM ? '#fff7ed' : i % 2 === 0 ? 'white' : '#fafafa' }}>
+                          <td style={{ ...TD_SHARED, textAlign: 'center', color: '#94a3b8', fontWeight: 700 }}>{i + 1}</td>
+                          <td style={TD_SHARED}>
+                            <p style={{ fontWeight: 700, color: '#0f172a', margin: 0, fontSize: 13 }}>{r.name}</p>
+                            <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>{r.id}</p>
+                          </td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}><Badge color="indigo">{r.classId}</Badge></td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ fontSize: 14, fontWeight: 800, color: r.absent === 0 ? '#cbd5e1' : isH ? '#e11d48' : isM ? '#f97316' : '#374151' }}>{r.absent || '—'}</span></td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ fontSize: 13, fontWeight: 600, color: r.late > 0 ? '#d97706' : '#cbd5e1' }}>{r.late || '—'}</span></td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ fontSize: 13, fontWeight: 600, color: '#059669' }}>{r.present || '—'}</span></td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}>
+                            {r.streak >= 2 ? <span style={{ fontSize: 11, fontWeight: 700, background: '#fff1f2', color: '#e11d48', padding: '2px 8px' }}>{r.streak} buổi</span> : <span style={{ color: '#cbd5e1' }}>—</span>}
+                          </td>
+                          <td style={{ ...TD_SHARED, textAlign: 'center' }}>
+                            {ph.length >= 9
+                              ? <a href={`https://zalo.me/${ph}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#2563eb', background: '#eff6ff', padding: '3px 9px', textDecoration: 'none' }}><Phone size={11} />Zalo</a>
+                              : <span style={{ color: '#cbd5e1' }}>—</span>
+                            }
+                          </td>
+                        </tr>
+                      );
+                    })
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {sub === 'diary' && <FAB onClick={onAddDiary} label="Ghi buổi dạy mới" color="#7c3aed" shadow="0 8px 24px rgba(124,58,237,0.5)" />}
+    </div>
+  );
+}
