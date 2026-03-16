@@ -1,4 +1,9 @@
 import { StrictMode } from 'react'
+import { initFontCheck } from './fontCheck'
+
+// Kiểm tra font tiếng Việt ngay khi app khởi động
+// Log warning nếu Google Fonts không load được (WebView/offline)
+initFontCheck()
 import { createRoot } from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import './index.css'
@@ -13,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
         style: {
           background: '#1e293b',
           color: '#fff',
-          fontFamily: 'Be Vietnam Pro, sans-serif',
+          fontFamily: "'Be Vietnam Pro', 'Nunito', system-ui, -apple-system, Roboto, Arial, sans-serif",
           fontWeight: 600,
           fontSize: '15px',
           borderRadius: '12px',

@@ -202,9 +202,11 @@ export default function FinanceTab({
         <div style={TABLE_WRAP}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid #f1f5f9' }}>
             <DollarSign size={14} color="#10b981" />
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Thu học phí ({payments.length} phiếu)</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Thu học phí ({payments.length} phiếu thu)</p>
           </div>
-          <div style={{ overflowX: 'auto' }}>
+          {/* Desktop */}
+          <div className="fin-desktop" style={{ overflowX: 'auto' }}>
+            <style>{`.fin-desktop{display:block}.fin-mobile{display:none}@media(max-width:767px){.fin-desktop{display:none!important}.fin-mobile{display:block!important}}`}</style>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
@@ -239,6 +241,28 @@ export default function FinanceTab({
               </tbody>
             </table>
           </div>
+          {/* Mobile cards */}
+          <div className="fin-mobile">
+            {payments.length === 0
+              ? <p style={{ textAlign: 'center', color: '#94a3b8', fontStyle: 'italic', padding: '32px 16px', fontSize: 13 }}>Chưa có phiếu thu</p>
+              : payments.slice().reverse().slice(0, 30).map((p, i) => (
+                <div key={i} style={{ padding: '11px 14px', borderBottom: '1px solid #f1f5f9', background: i % 2 === 0 ? 'white' : '#f9fafc' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', margin: 0 }}>{capitalizeName(p.studentName)}</p>
+                      <p style={{ fontSize: 11, color: '#94a3b8', margin: '2px 0 0' }}>{formatDate(p.date)} · {p.method || '---'}</p>
+                    </div>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: '#059669', flexShrink: 0 }}>+{fmtVND(p.amount)}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                    <button onClick={() => onViewInvoice(p)} style={{ flex: 1, padding: '6px 0', background: '#fff7ed', color: '#f97316', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Xem phiếu</button>
+                    <button onClick={() => onEditPayment(p)} style={{ flex: 1, padding: '6px 0', background: '#eef2ff', color: '#6366f1', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Sửa</button>
+                    <button onClick={() => onDeletePayment(p)} style={{ width: 34, padding: '6px 0', background: '#fff1f2', color: '#f87171', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>✕</button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
         </div>
       )}
 
@@ -247,9 +271,11 @@ export default function FinanceTab({
         <div style={TABLE_WRAP}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid #f1f5f9' }}>
             <TrendingDown size={14} color="#f87171" />
-            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Chi tiêu ({expenses.length} phiếu)</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Chi tiêu ({expenses.length} phiếu chi)</p>
           </div>
-          <div style={{ overflowX: 'auto' }}>
+          {/* Desktop */}
+          <div className="fin-exp-desktop" style={{ overflowX: 'auto' }}>
+            <style>{`.fin-exp-desktop{display:block}.fin-exp-mobile{display:none}@media(max-width:767px){.fin-exp-desktop{display:none!important}.fin-exp-mobile{display:block!important}}`}</style>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
@@ -279,6 +305,27 @@ export default function FinanceTab({
                 }
               </tbody>
             </table>
+          </div>
+          {/* Mobile cards */}
+          <div className="fin-exp-mobile">
+            {expenses.length === 0
+              ? <p style={{ textAlign: 'center', color: '#94a3b8', fontStyle: 'italic', padding: '32px 16px', fontSize: 13 }}>Chưa có phiếu chi</p>
+              : expenses.slice().reverse().map((e, i) => (
+                <div key={i} style={{ padding: '11px 14px', borderBottom: '1px solid #f1f5f9', background: i % 2 === 0 ? 'white' : '#f9fafc' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', margin: 0 }}>{e.description}</p>
+                      <p style={{ fontSize: 11, color: '#94a3b8', margin: '2px 0 0' }}>{formatDate(e.date)} · {e.category}</p>
+                    </div>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: '#e11d48', flexShrink: 0 }}>-{fmtVND(e.amount)}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                    <button onClick={() => onEditExpense(e)} style={{ flex: 1, padding: '6px 0', background: '#eef2ff', color: '#6366f1', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Sửa</button>
+                    <button onClick={() => onDeleteExpense(e)} style={{ flex: 1, padding: '6px 0', background: '#fff1f2', color: '#f87171', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Xóa</button>
+                  </div>
+                </div>
+              ))
+            }
           </div>
         </div>
       )}

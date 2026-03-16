@@ -62,7 +62,7 @@ export function GridLayout({ children, minColWidth=200, gap=DS.gapMd, style }: {
 }
 
 export function Grid2({ children, gap=DS.gapMd, style }: { children:React.ReactNode; gap?:number; style?:React.CSSProperties }) {
-  return <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))', gap, ...style }}>{children}</div>;
+  return <div className="two-col" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))', gap, ...style }}>{children}</div>;
 }
 
 export function TableContainer({ children, style }: { children:React.ReactNode; style?:React.CSSProperties }) {

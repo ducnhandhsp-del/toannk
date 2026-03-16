@@ -78,28 +78,28 @@ export function StatBlock({ icon: Icon, value, label, sub, gradient, onClick, ac
   const clickable = !!onClick;
   return (
     <div onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{ background:gradient, padding:'13px 16px', display:'flex', alignItems:'center', gap:12,
+      style={{ background:gradient, padding:'11px 13px', display:'flex', alignItems:'center', gap:9,
         cursor:clickable?'pointer':'default', position:'relative', overflow:'hidden', minWidth:0,
         boxShadow:hov&&clickable?'0 6px 20px rgba(0,0,0,0.18)':'0 2px 8px rgba(0,0,0,0.10)',
         transform:hov&&clickable?'translateY(-2px)':'none', transition:'all 0.16s ease' }}>
       <div style={{ position:'absolute', right:-10, top:-10, width:56, height:56, borderRadius:'50%', background:'rgba(255,255,255,0.10)', pointerEvents:'none' }}/>
-      <div style={{ width:40, height:40, borderRadius:9, background:'rgba(255,255,255,0.20)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-        <Icon size={18} color="white"/>
+      <div style={{ width:36, height:36, borderRadius:8, background:'rgba(255,255,255,0.20)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <Icon size={16} color="white"/>
       </div>
-      <div style={{ fontSize:22, fontWeight:800, color:'white', lineHeight:1, flexShrink:0, maxWidth:110, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{value}</div>
       <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ fontSize:12, fontWeight:700, color:'rgba(255,255,255,0.92)', lineHeight:1.3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{label}</div>
-        {sub && <div style={{ fontSize:11, color:'rgba(255,255,255,0.58)', marginTop:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{sub}</div>}
+        <div style={{ fontSize:20, fontWeight:800, color:'white', lineHeight:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{value}</div>
+        <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.92)', lineHeight:1.3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:2 }}>{label}</div>
+        {sub && <div style={{ fontSize:10, color:'rgba(255,255,255,0.58)', marginTop:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{sub}</div>}
       </div>
-      {clickable&&actionLabel&&hov&&<span style={{ fontSize:10, fontWeight:700, padding:'3px 8px', borderRadius:5, background:'rgba(255,255,255,0.28)', color:'white', flexShrink:0, whiteSpace:'nowrap' }}>+ {actionLabel}</span>}
-      {!actionLabel&&delta!=null&&<span style={{ fontSize:11, fontWeight:700, padding:'2px 6px', borderRadius:5, background:'rgba(255,255,255,0.22)', color:'white', flexShrink:0 }}>{delta>0?`↑${delta}`:delta<0?`↓${Math.abs(delta)}`:'→'}</span>}
+      {clickable&&actionLabel&&hov&&<span style={{ fontSize:9, fontWeight:700, padding:'3px 6px', borderRadius:5, background:'rgba(255,255,255,0.28)', color:'white', flexShrink:0, whiteSpace:'nowrap' }}>+ {actionLabel}</span>}
+      {!actionLabel&&delta!=null&&<span style={{ fontSize:10, fontWeight:700, padding:'2px 5px', borderRadius:5, background:'rgba(255,255,255,0.22)', color:'white', flexShrink:0 }}>{delta>0?`↑${delta}`:delta<0?`↓${Math.abs(delta)}`:'→'}</span>}
     </div>
   );
 }
 
 export function StatGrid({ children, cols }: { children: React.ReactNode; cols?: number }) {
   return (
-    <div style={{ display:'grid', gridTemplateColumns:cols?`repeat(${cols},1fr)`:'repeat(auto-fit,minmax(200px,1fr))', gap:10 }}>
+    <div className="stat-grid" style={{ display:'grid', gridTemplateColumns:cols?`repeat(${cols},1fr)`:'repeat(auto-fit,minmax(200px,1fr))', gap:10 }}>
       {children}
     </div>
   );
@@ -113,7 +113,7 @@ export function FAB({ onClick, label, icon: Icon=Plus, color='#6366f1', shadow='
   const [hov, setHov] = useState(false);
   return (
     <>
-      <style>{`.ltn-fab{bottom:32px!important}@media(max-width:1023px){.ltn-fab{bottom:88px!important}}`}</style>
+      <style>{`@media(min-width:768px){.ltn-fab{bottom:32px!important}}`}</style>
       <button onClick={onClick} aria-label={label} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
         className="ltn-fab print:hidden"
         style={{ position:'fixed', right:24, zIndex:40, width:56, height:56, borderRadius:'50%', background:color, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:shadow, transform:hov?'scale(1.08)':'scale(1)', transition:'transform 0.18s' }}>

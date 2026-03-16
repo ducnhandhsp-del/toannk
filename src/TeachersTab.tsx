@@ -112,7 +112,7 @@ export default function TeachersTab({ teachers:propTeachers, uClasses, tlogs, on
       {/* Horizontal stat cards */}
       <StatGrid>
         <StatBlock icon={Users}  value={teachers.length} label="Tổng giáo viên" sub="trong hệ thống"    gradient="linear-gradient(135deg,#f59e0b,#d97706)"/>
-        <StatBlock icon={Award}  value={active}           label="Đang dạy"       sub="giáo viên active"  gradient="linear-gradient(135deg,#10b981,#059669)"/>
+        <StatBlock icon={Award}  value={active}           label="Đang dạy"       sub={`/ ${teachers.length} giáo viên`}  gradient="linear-gradient(135deg,#10b981,#059669)"/>
         <StatBlock icon={School} value={uClasses.length}  label="Lớp phụ trách"  sub="tổng số lớp"       gradient="linear-gradient(135deg,#6366f1,#4f46e5)"/>
       </StatGrid>
 

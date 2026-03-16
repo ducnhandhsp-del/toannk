@@ -516,7 +516,7 @@ export default function App() {
 
   
   if (loading) return (
-    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#f8fafc', gap:16 }}>
+    <div style={{ minHeight:'100dvh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#f8fafc', gap:16 }}>
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-xl">
         <GraduationCap size={32} className="text-white animate-bounce" />
       </div>
@@ -527,15 +527,15 @@ export default function App() {
 
   
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'inherit' }}>
+    <div style={{ minHeight: '100dvh', background: '#f8fafc', fontFamily: 'inherit' }}>
       <div style={{ display: 'flex' }}>
-        {}
+        {/* Sidebar desktop */}
         <Sidebar active={screen} set={goScreen} centerName={centerName} />
 
-        {}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        {/* Main column */}
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
 
-          {}
+          {/* Mobile header */}
           <MobileHeader active={screen} set={goScreen} centerName={centerName} />
 
           <main
@@ -544,7 +544,7 @@ export default function App() {
               padding: '20px 24px 32px',
               boxSizing: 'border-box',
             }}
-            className="print:p-0"
+            className="print:p-0 mobile-main-content"
           >
 
             {screen === 'overview' && (

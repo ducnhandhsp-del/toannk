@@ -5,8 +5,11 @@ import { ModalWrap, DS } from './UIComponents';
 import { Button, IconButton, Input, Select, RadioGroup, FilterTabs } from './dsComponents';
 import type { Student, Payment } from './types';
 
-const FS_WRAP: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:12,overflowY:'auto',background:'rgba(15,23,42,0.65)',backdropFilter:'blur(5px)' };
-const FS_DLG: React.CSSProperties  = { background:'white',width:'100%',maxWidth:780,maxHeight:'94vh',borderRadius:14,display:'flex',flexDirection:'column',boxShadow:'0 24px 80px rgba(0,0,0,0.28)',overflow:'hidden' };
+const FS_WRAP: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center',background:'rgba(15,23,42,0.65)',backdropFilter:'blur(5px)' };
+const FS_DLG: React.CSSProperties  = { background:'white',width:'100%',maxWidth:780,maxHeight:'94dvh',borderRadius:'14px 14px 0 0',display:'flex',flexDirection:'column',boxShadow:'0 -8px 40px rgba(0,0,0,0.28)',overflow:'hidden' };
+// Desktop: center dialog
+const FS_WRAP_DT: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:12,overflowY:'auto',background:'rgba(15,23,42,0.65)',backdropFilter:'blur(5px)' };
+const FS_DLG_DT: React.CSSProperties  = { background:'white',width:'100%',maxWidth:780,maxHeight:'94vh',borderRadius:14,display:'flex',flexDirection:'column',boxShadow:'0 24px 80px rgba(0,0,0,0.28)',overflow:'hidden' };
 
 function SBox({ color, iconColor, icon:Icon, title, children }: { color:string; iconColor:string; icon:any; title:string; children:React.ReactNode }) {
   return (
@@ -55,15 +58,18 @@ export function FABModal({
   const isEditing=!!(editingPayment||editingExpense), isIncome=tab==='income';
   const accentColor=isIncome?'#059669':'#dc2626';
   const headerGrad=isIncome?'linear-gradient(135deg,#ecfdf5,#d1fae5)':'linear-gradient(135deg,#fef2f2,#fecaca)';
-  const monthOptions=Array.from({length:12},(_,i)=>({value:String(i+1),label:`Tháng ${i+1}`}));
+  const monthOptions=Array.from({length:12},(_,i)=>({value:String(i+1),label:`Tháng ${i+1}/${fee.namHP||curYr}`}));
   const yearOptions=[curYr-1,curYr,curYr+1].map(y=>({value:String(y),label:String(y)}));
   const methodOptions=[{value:'Chuyển khoản',label:'Chuyển khoản'},{value:'Tiền mặt',label:'Tiền mặt'}];
   const categoryOptions=['Vận hành','In ấn','Trang thiết bị','Lương','Khác'].map(v=>({value:v,label:v}));
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const wrapStyle = isMobile ? FS_WRAP : FS_WRAP_DT;
+  const dlgStyle  = isMobile ? FS_DLG  : FS_DLG_DT;
 
   return (
-    <div style={FS_WRAP}>
-      <div style={FS_DLG}>
-        <div style={{ padding:'20px 28px',background:headerGrad,borderBottom:`1.5px solid ${accentColor}22`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
+    <div style={wrapStyle}>
+      <div style={dlgStyle}>
+        <div style={{ padding:'16px 20px',background:headerGrad,borderBottom:`1.5px solid ${accentColor}22`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
           <div style={{ display:'flex',alignItems:'center',gap:14 }}>
             <div style={{ width:44,height:44,borderRadius:12,background:accentColor,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 4px 14px ${accentColor}44` }}>
               {isIncome?<TrendingUp size={20} color="white"/>:<TrendingDown size={20} color="white"/>}
@@ -80,10 +86,10 @@ export function FABModal({
           <FilterTabs variant="segment" active={tab} onChange={id=>setTab(id as any)} tabs={[{id:'income',label:'💰 Thu phí'},{id:'expense',label:'💸 Ghi chi'}]}/>
         </div>}
 
-        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'16px 28px',display:'flex',flexDirection:'column',gap:14 }}>
+        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'14px 20px',display:'flex',flexDirection:'column',gap:12 }}>
           {isIncome&&(<>
             <SBox color="#059669" iconColor="#059669" icon={Calendar} title="Thông tin chứng từ">
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14 }}>
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12 }}>
                 <Input label="Ngày thu" type="date" value={fee.date||''} onChange={v=>uf('date',v)} size="lg"/>
                 <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
                   <label style={{ fontSize:12,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'0.08em' }}>Mã học sinh *</label>
@@ -101,21 +107,20 @@ export function FABModal({
                 <label style={{ fontSize:12,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'0.08em' }}>Số tiền (VNĐ) *</label>
                 <div style={{ position:'relative' }}>
                   <input type="number" value={fee.soTien||''} onChange={e=>uf('soTien',e.target.value)}
-                    style={{ width:'100%',height:60,paddingLeft:44,paddingRight:14,fontSize:26,fontWeight:800,color:'#059669',background:'white',border:'1.5px solid #fde68a',borderRadius:10,outline:'none',textAlign:'right',boxSizing:'border-box',fontFamily:'inherit' }}
+                    style={{ width:'100%',height:56,paddingLeft:44,paddingRight:14,fontSize:24,fontWeight:800,color:'#059669',background:'white',border:'1.5px solid #fde68a',borderRadius:10,outline:'none',textAlign:'right',boxSizing:'border-box',fontFamily:'inherit' }}
                     onFocus={e=>e.target.style.borderColor='#f59e0b'} onBlur={e=>e.target.style.borderColor='#fde68a'}/>
                   <span style={{ position:'absolute',left:14,top:'50%',transform:'translateY(-50%)',fontSize:18,fontWeight:700,color:'#d97706' }}>₫</span>
+                  {fee.soTien>0&&<span style={{ position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',fontSize:13,color:'#d97706',fontWeight:700,pointerEvents:'none' }}>{fmtVND(Number(fee.soTien))}</span>}
                 </div>
-                {fee.soTien>0&&<p style={{ fontSize:14,color:'#d97706',fontWeight:700,margin:0,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:8,padding:'6px 12px' }}>= {fmtVND(Number(fee.soTien))}</p>}
               </div>
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,alignItems:'start' }}>
-                <Select label="Hình thức" value={fee.method||'Chuyển khoản'} onChange={v=>uf('method',v)} options={methodOptions} size="lg"/>
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,alignItems:'start' }}>
+                <Select label="Hình thức thu" value={fee.method||'Chuyển khoản'} onChange={v=>uf('method',v)} options={methodOptions} size="lg"/>
                 <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
                   <label style={{ fontSize:12,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'0.08em' }}>Tháng học phí *</label>
-                  <div style={{ display:'grid',gridTemplateColumns:'1fr 88px',gap:8 }}>
-                    <Select value={String(fee.thangHP||curMo)} onChange={v=>uf('thangHP',Number(v))} options={monthOptions} size="lg"/>
+                  <div style={{ display:'grid',gridTemplateColumns:'1fr 80px',gap:8 }}>
+                    <Select value={String(fee.thangHP||curMo)} onChange={v=>uf('thangHP',Number(v))} options={Array.from({length:12},(_,i)=>({value:String(i+1),label:`Tháng ${i+1}`}))} size="lg"/>
                     <Select value={String(fee.namHP||curYr)} onChange={v=>uf('namHP',Number(v))} options={yearOptions} size="lg"/>
                   </div>
-                  <p style={{ fontSize:13,color:'#d97706',fontWeight:700,margin:0,background:'#fffbeb',border:'1px solid #fde68a',borderRadius:8,padding:'6px 12px' }}>📋 HP tháng {fee.thangHP||curMo}/{fee.namHP||curYr}</p>
                 </div>
               </div>
             </SBox>
@@ -129,7 +134,7 @@ export function FABModal({
 
           {!isIncome&&(<>
             <SBox color="#dc2626" iconColor="#dc2626" icon={Calendar} title="Thông tin chứng từ">
-              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14 }}>
+              <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12 }}>
                 <Input label="Ngày chi" type="date" value={exp.date||''} onChange={v=>ue('date',v)} size="lg"/>
                 <Input label="Người chi" value={exp.spender||''} onChange={v=>ue('spender',v)} placeholder="Ai chi?" size="lg"/>
               </div>
@@ -141,22 +146,22 @@ export function FABModal({
                 <label style={{ fontSize:12,fontWeight:700,color:'#64748b',textTransform:'uppercase',letterSpacing:'0.08em' }}>Số tiền (VNĐ) *</label>
                 <div style={{ position:'relative' }}>
                   <input type="number" value={exp.amount||''} onChange={e=>ue('amount',e.target.value)}
-                    style={{ width:'100%',height:60,paddingLeft:44,paddingRight:14,fontSize:26,fontWeight:800,color:'#dc2626',background:'white',border:'1.5px solid #fed7aa',borderRadius:10,outline:'none',textAlign:'right',boxSizing:'border-box',fontFamily:'inherit' }}
+                    style={{ width:'100%',height:56,paddingLeft:44,paddingRight:14,fontSize:24,fontWeight:800,color:'#dc2626',background:'white',border:'1.5px solid #fed7aa',borderRadius:10,outline:'none',textAlign:'right',boxSizing:'border-box',fontFamily:'inherit' }}
                     onFocus={e=>e.target.style.borderColor='#f97316'} onBlur={e=>e.target.style.borderColor='#fed7aa'}/>
                   <span style={{ position:'absolute',left:14,top:'50%',transform:'translateY(-50%)',fontSize:18,fontWeight:700,color:'#ea580c' }}>₫</span>
+                  {exp.amount>0&&<span style={{ position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',fontSize:13,color:'#ea580c',fontWeight:700,pointerEvents:'none' }}>{fmtVND(Number(exp.amount))}</span>}
                 </div>
-                {exp.amount>0&&<p style={{ fontSize:14,color:'#ea580c',fontWeight:700,margin:0,background:'#fff7ed',border:'1px solid #fed7aa',borderRadius:8,padding:'6px 12px' }}>= {fmtVND(Number(exp.amount))}</p>}
               </div>
               <Input label="Lý do *" value={exp.description||''} onChange={v=>ue('description',v)} placeholder="Mua bút, in đề, văn phòng phẩm..." size="lg"/>
             </SBox>
           </>)}
         </div>
 
-        <div style={{ padding:'16px 28px',borderTop:'1px solid #f1f5f9',display:'flex',justifyContent:'flex-end',gap:12,flexShrink:0 }}>
-          <Button variant="outline" intent="neutral" size="lg" onClick={onClose}>Hủy</Button>
+        <div style={{ padding:'14px 20px',borderTop:'1px solid #f1f5f9',display:'flex',justifyContent:'flex-end',gap:10,flexShrink:0,flexWrap:'wrap' }}>
+          <Button variant="outline" intent="neutral" size="lg" onClick={onClose} style={{ minWidth:100 }}>Hủy</Button>
           {isIncome
-            ? <Button intent="success" size="lg" loading={isSaving} icon={<Save size={16}/>} onClick={()=>onSaveFee(fee)} style={{ boxShadow:'0 4px 14px rgba(5,150,105,0.4)' }}>{isEditing?'Cập nhật thu':'✓ Ghi sổ thu'}</Button>
-            : <Button intent="danger"  size="lg" loading={isSaving} icon={<Save size={16}/>} onClick={()=>onSaveExpense(exp)} style={{ boxShadow:'0 4px 14px rgba(220,38,38,0.4)' }}>{isEditing?'Cập nhật chi':'✓ Ghi sổ chi'}</Button>
+            ? <Button intent="success" size="lg" loading={isSaving} icon={<Save size={16}/>} onClick={()=>onSaveFee(fee)} style={{ boxShadow:'0 4px 14px rgba(5,150,105,0.4)',flex:1,maxWidth:220 }}>{isEditing?'Cập nhật thu':'✓ Ghi sổ thu'}</Button>
+            : <Button intent="danger"  size="lg" loading={isSaving} icon={<Save size={16}/>} onClick={()=>onSaveExpense(exp)} style={{ boxShadow:'0 4px 14px rgba(220,38,38,0.4)',flex:1,maxWidth:220 }}>{isEditing?'Cập nhật chi':'✓ Ghi sổ chi'}</Button>
           }
         </div>
       </div>

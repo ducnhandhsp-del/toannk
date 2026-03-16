@@ -183,7 +183,9 @@ export default function OperationsTab({ filtD, pgD, setPgD, qD, setQD, dCls, set
       {/* ── DIARY TABLE ── */}
       {sub === 'diary' && (
         <div style={TABLE_WRAP}>
-          <div style={{ overflowX: 'auto' }}>
+          {/* Desktop table */}
+          <div className="diary-desktop-table" style={{ overflowX: 'auto' }}>
+            <style>{`@media(max-width:767px){.diary-desktop-table{display:none!important}}.diary-mobile-cards{display:none}@media(max-width:767px){.diary-mobile-cards{display:block!important}}`}</style>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
               <thead>
                 <tr>
@@ -225,6 +227,38 @@ export default function OperationsTab({ filtD, pgD, setPgD, qD, setQD, dCls, set
                 }
               </tbody>
             </table>
+          </div>
+          {/* Mobile card list */}
+          <div className="diary-mobile-cards">
+            {paged.length === 0
+              ? <div style={{ padding: '40px 16px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 32 }}>📖</span>
+                  <p style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, margin: 0 }}>Chưa có nhật ký nào</p>
+                  <button onClick={onAddDiary} style={{ padding: '8px 18px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 8 }}>+ Ghi buổi đầu tiên</button>
+                </div>
+              : paged.map((l, i) => (
+                <div key={i} style={{ padding: '12px 14px', borderBottom: '1px solid #f1f5f9', background: i % 2 === 0 ? 'white' : '#f9fafc' }}>
+                  {/* Row 1: date + class + ca */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#475569' }}>{formatDate(l.date)}</span>
+                    <Badge color="indigo">{l.classId}</Badge>
+                    {l.caDay && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 700, color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: 4 }}><Clock size={9} color="#b45309" />{l.caDay}</span>}
+                    <span style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '2px 7px', borderRadius: 4 }}>✓ {l.present}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 700, color: '#e11d48', background: '#fff1f2', padding: '2px 7px', borderRadius: 4 }}>✗ {l.absent}</span>
+                    </span>
+                  </div>
+                  {/* Row 2: content */}
+                  <p style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', margin: '0 0 4px', lineHeight: 1.4 }}>{l.content}</p>
+                  {l.homework && l.homework !== '---' && <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>📖 BTVN: {l.homework}</p>}
+                  {/* Row 3: actions */}
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button onClick={() => onViewDiary(l)} style={{ flex: 1, padding: '6px 0', background: '#eef2ff', color: '#4f46e5', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Xem chi tiết</button>
+                    <button onClick={() => onEditDiary(l)} style={{ flex: 1, padding: '6px 0', background: '#fffbeb', color: '#b45309', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Sửa</button>
+                  </div>
+                </div>
+              ))
+            }
           </div>
           <div style={{ borderTop: '1px solid #f1f5f9', background: '#fafafa' }}>
             <Pager page={pgD} total={filtD.length} perPage={IPP} setPage={setPgD} showTotal />

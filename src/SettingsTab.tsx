@@ -307,7 +307,8 @@ export default function SettingsTab({
             <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
               <div>
                 <label style={{ fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', display:'block', marginBottom:4 }}>Google Apps Script URL</label>
-                <input value={scriptUrl} onChange={e=>setScriptUrl(e.target.value)} placeholder="https://script.google.com/macros/s/..." style={{ ...INP, marginBottom:8 }}/>
+                <input value={scriptUrl} onChange={e=>setScriptUrl(e.target.value)} placeholder="https://script.google.com/macros/s/..." style={{ ...INP, marginBottom:4 }}/>
+                <p style={{ fontSize:11, color:'#94a3b8', margin:'0 0 8px', fontStyle:'italic' }}>URL triển khai của Google Apps Script — dùng để kết nối dữ liệu với Google Sheets</p>
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
                 <span style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'7px 12px', border:`1px solid`, borderColor:gsOk===true?'#a7f3d0':gsOk===false?'#fca5a5':'#e2e8f0', background:connBg, color:connColor, fontSize:12, fontWeight:700 }}>
@@ -325,10 +326,12 @@ export default function SettingsTab({
                 <div>
                   <label style={{ fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', display:'block', marginBottom:4 }}>Google Sheets URL</label>
                   <input value={sheetsUrl} onChange={e=>setSheetsUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/..." style={INP}/>
+                  <p style={{ fontSize:11, color:'#94a3b8', margin:'4px 0 8px', fontStyle:'italic' }}>Link Google Sheets chứa dữ liệu học sinh, lịch học</p>
                 </div>
                 <div>
                   <label style={{ fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', display:'block', marginBottom:4 }}>Google Doc URL</label>
                   <input value={docUrl} onChange={e=>setDocUrl(e.target.value)} placeholder="https://docs.google.com/document/..." style={INP}/>
+                  <p style={{ fontSize:11, color:'#94a3b8', margin:'4px 0 0', fontStyle:'italic' }}>Link Google Docs dùng để in phiếu, tạo báo cáo</p>
                 </div>
               </div>
               {(sheetsUrl||docUrl)&&(

@@ -134,41 +134,51 @@ export default function ReportsTab({ students, payments, expenses, tlogs, uClass
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={TABLE_WRAP}>
             <div style={{ padding: '9px 14px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 7 }}><School size={13} color="#6366f1" /><p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Doanh thu theo lớp · T{filterMo}/{filterYr}</p></div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead><tr><th style={{ ...TH_SHARED, textAlign:'center' }}>Số lớp</th><th style={TH_SHARED}>Giáo viên</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Số phiếu</th><th style={{ ...TH_SHARED, textAlign:'right' }}>Tổng thu</th><th style={{ ...TH_SHARED, textAlign:'right' }}>TB/phiếu</th></tr></thead>
-              <tbody>
-                {revenueByClass.length === 0 ? <tr><td colSpan={5} style={{ padding: '32px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có doanh thu</td></tr>
-                  : revenueByClass.map((r, i) => (
-                  <tr key={r.cls} onMouseEnter={() => setHovR(i)} onMouseLeave={() => setHovR(null)} style={trStyle(i, hovR===i)}>
-                    <td style={{ ...TD_SHARED, textAlign:'center', fontWeight:700, fontSize:15, color:'#4338ca' }}>{revenueByClass.indexOf(r)+1}</td>
-                    <td style={{ ...TD_SHARED, color: '#475569' }}>{r.teacher} · <span style={{fontWeight:700,color:'#0f172a'}}>{r.cls}</span></td>
-                    <td style={{ ...TD_SHARED, textAlign: 'center', fontWeight: 600 }}>{r.count}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'right', fontWeight: 700, color: '#059669' }}>+{fmtVND(r.revenue)}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'right', color: '#64748b' }}>{fmtVND(r.avg)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as any }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 360 }}>
+                <thead><tr>
+                  <th style={{ ...TH_SHARED, textAlign:'center' }}>Lớp</th>
+                  <th style={TH_SHARED}>Giáo viên</th>
+                  <th style={{ ...TH_SHARED, textAlign:'center' }}>Phiếu</th>
+                  <th style={{ ...TH_SHARED, textAlign:'right' }}>Tổng thu</th>
+                </tr></thead>
+                <tbody>
+                  {revenueByClass.length === 0 ? <tr><td colSpan={4} style={{ padding: '32px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có doanh thu</td></tr>
+                    : revenueByClass.map((r, i) => (
+                    <tr key={r.cls} onMouseEnter={() => setHovR(i)} onMouseLeave={() => setHovR(null)} style={trStyle(i, hovR===i)}>
+                      <td style={{ ...TD_SHARED, textAlign:'center', fontWeight:700, color:'#4338ca' }}>{r.cls}</td>
+                      <td style={{ ...TD_SHARED, color: '#475569', fontSize: 12 }}>{r.teacher}</td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center', fontWeight: 600 }}>{r.count}</td>
+                      <td style={{ ...TD_SHARED, textAlign: 'right', fontWeight: 700, color: '#059669' }}>+{fmtVND(r.revenue)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <div style={TABLE_WRAP}>
-            <div style={{ padding: '9px 14px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 7 }}><DollarSign size={13} color="#10b981" /><p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Doanh thu theo giáo viên · T{filterMo}/{filterYr}</p></div>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead><tr><th style={TH_SHARED}>Giáo viên</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Số HS</th><th style={TH_SHARED}>Lớp</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Đóng phí</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Buổi</th><th style={{ ...TH_SHARED, textAlign:'right' }}>Doanh thu</th><th style={{ ...TH_SHARED, textAlign:'right' }}>TB/buổi</th></tr></thead>
-              <tbody>
-                {teacherRevenue.length === 0 ? <tr><td colSpan={7} style={{ padding: '28px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có dữ liệu</td></tr>
-                  : teacherRevenue.map((t, i) => (
-                  <tr key={i} onMouseEnter={() => setHovT(i)} onMouseLeave={() => setHovT(null)} style={trStyle(i, hovT===i)}>
-                    <td style={{ ...TD_SHARED, fontWeight: 700 }}>{t.fullName}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'center' }}>{t.students}</td>
-                    <td style={{ ...TD_SHARED, fontSize: 12, color: '#475569' }}>{t.classList||'—'}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', background: t.students>0&&t.paid/t.students>=0.8?'#ecfdf5':'#fff7ed', color: t.students>0&&t.paid/t.students>=0.8?'#059669':'#d97706' }}>{t.paid}/{t.students}</span></td>
-                    <td style={{ ...TD_SHARED, textAlign: 'center', fontWeight: 600, color: '#7c3aed' }}>{t.sessions}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'right', fontWeight: 700, color: '#059669' }}>+{fmtVND(t.revenue)}</td>
-                    <td style={{ ...TD_SHARED, textAlign: 'right', color: '#64748b' }}>{t.sessions>0?fmtVND(t.avgPerSession):'—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ padding: '9px 14px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 7 }}><DollarSign size={13} color="#10b981" /><p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Tổng quan theo giáo viên · T{filterMo}/{filterYr}</p></div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as any }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 340 }}>
+                <thead><tr>
+                  <th style={TH_SHARED}>Giáo viên</th>
+                  <th style={{ ...TH_SHARED, textAlign:'center' }}>HS</th>
+                  <th style={{ ...TH_SHARED, textAlign:'center' }}>Đóng phí</th>
+                  <th style={{ ...TH_SHARED, textAlign:'right' }}>Doanh thu</th>
+                </tr></thead>
+                <tbody>
+                  {teacherRevenue.length === 0 ? <tr><td colSpan={4} style={{ padding: '28px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có dữ liệu</td></tr>
+                    : teacherRevenue.map((t, i) => (
+                    <tr key={i} onMouseEnter={() => setHovT(i)} onMouseLeave={() => setHovT(null)} style={trStyle(i, hovT===i)}>
+                      <td style={{ ...TD_SHARED, fontWeight: 700 }}>{t.fullName}</td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center' }}>{t.students}</td>
+                      <td style={{ ...TD_SHARED, textAlign: 'center' }}><span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', background: t.students>0&&t.paid/t.students>=0.8?'#ecfdf5':'#fff7ed', color: t.students>0&&t.paid/t.students>=0.8?'#059669':'#d97706' }}>{t.paid}/{t.students}</span></td>
+                      <td style={{ ...TD_SHARED, textAlign: 'right', fontWeight: 700, color: '#059669' }}>+{fmtVND(t.revenue)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -176,8 +186,9 @@ export default function ReportsTab({ students, payments, expenses, tlogs, uClass
       {/* Attendance */}
       {reportType === 'attendance' && (
         <div style={TABLE_WRAP}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr><th style={TH_SHARED}>Lớp</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Buổi dạy</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Có mặt</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Vắng</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Muộn</th><th style={TH_SHARED}>Tỷ lệ</th></tr></thead>
+          <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 340 }}>
+            <thead><tr><th style={TH_SHARED}>Lớp</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Buổi</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Có mặt</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Vắng</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Muộn</th><th style={TH_SHARED}>Tỷ lệ</th></tr></thead>
             <tbody>
               {attendanceStats.length === 0 ? <tr><td colSpan={6} style={{ padding: '36px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có buổi dạy tháng này</td></tr>
                 : attendanceStats.map((r, i) => (
@@ -197,6 +208,7 @@ export default function ReportsTab({ students, payments, expenses, tlogs, uClass
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -226,7 +238,8 @@ export default function ReportsTab({ students, payments, expenses, tlogs, uClass
       {/* Fee */}
       {reportType === 'fee' && (
         <div style={TABLE_WRAP}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 300 }}>
             <thead><tr><th style={TH_SHARED}>Lớp</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Sĩ số</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Đã đóng</th><th style={{ ...TH_SHARED, textAlign:'center' }}>Chưa đóng</th><th style={TH_SHARED}>Tỷ lệ</th></tr></thead>
             <tbody>
               {feeByClass.length === 0 ? <tr><td colSpan={5} style={{ padding: '36px 16px', textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có dữ liệu</td></tr>
@@ -246,6 +259,7 @@ export default function ReportsTab({ students, payments, expenses, tlogs, uClass
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

@@ -13,7 +13,8 @@ export const colors = {
 } as const;
 
 export const typography = {
-  fontFamily: "'Nunito', sans-serif",
+  // Be Vietnam Pro trước, Nunito fallback — cả 2 đều có full Vietnamese glyph set
+  fontFamily: "'Be Vietnam Pro', 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', Arial, sans-serif",
   fontSize:   { xs:10,sm:12,base:13,md:14,lg:16,xl:18,'2xl':22,'3xl':28,'4xl':36 },
   fontWeight: { normal:400,medium:500,semibold:600,bold:700,extrabold:800 },
   lineHeight: { tight:1.2,normal:1.5,loose:1.8 },
