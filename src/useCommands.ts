@@ -4,8 +4,8 @@
  */
 
 import { useMemo } from 'react';
-import type { Student } from '../types';
-import type { Screen } from '../types';
+import type { Student } from './types';
+import type { Screen } from './types';
 
 export interface Command {
   id:       string;

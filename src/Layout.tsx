@@ -1,15 +1,24 @@
-/**
- * Layout.tsx — v27.1
- * - Sidebar mở rộng: 200px | Thu gọn: 48px (~0.8cm icon-only)
- * - Mặc định thu gọn (collapsed=true) để tiết kiệm diện tích
- * - BottomNav chỉ mobile (<768px)
- */
 import React, { memo, useState, useEffect, useRef } from 'react';
-import { X, Menu, GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart3, BookOpen, ChevronLeft, ChevronRight, GraduationCap, LayoutDashboard, Library, Menu, School, Settings, Users, Wallet, X } from 'lucide-react';
 import type { Screen } from './types';
-import { NAV_ITEMS } from './navItems';
 
-export { NAV_ITEMS } from './navItems';
+export const NAV_ITEMS: {
+  id: Screen;
+  label: string;
+  shortLabel: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  color: string;
+}[] = [
+  { id: 'overview',    label: 'Tổng quan',  shortLabel: 'Tổng quan', icon: LayoutDashboard, color: 'text-indigo-400' },
+  { id: 'operations',  label: 'Vận hành',   shortLabel: 'Vận hành',  icon: BookOpen,        color: 'text-violet-400' },
+  { id: 'teachers',    label: 'Giáo viên',  shortLabel: 'GV',        icon: Users,           color: 'text-amber-400' },
+  { id: 'classes',     label: 'Lớp học',    shortLabel: 'Lớp học',   icon: School,          color: 'text-sky-400' },
+  { id: 'students',    label: 'Học sinh',   shortLabel: 'Học sinh',  icon: GraduationCap,   color: 'text-teal-400' },
+  { id: 'materials',   label: 'Học liệu',   shortLabel: 'Học liệu',  icon: Library,         color: 'text-emerald-400' },
+  { id: 'finance',     label: 'Tài chính',  shortLabel: 'Tài chính', icon: Wallet,          color: 'text-orange-400' },
+  { id: 'reports',     label: 'Báo cáo',    shortLabel: 'Báo cáo',   icon: BarChart3,       color: 'text-rose-400' },
+  { id: 'settings',    label: 'Cài đặt',    shortLabel: 'Cài đặt',   icon: Settings,        color: 'text-slate-400' },
+];
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(() =>
@@ -132,12 +141,10 @@ const SidebarContent = memo(({
   </div>
 ));
 
-/* Desktop Sidebar */
 export const Sidebar = memo(({ active, set, centerName }: {
   active: Screen; set: (s: Screen) => void; centerName: string;
 }) => {
   const isDesktop = useIsDesktop();
-  // Default collapsed to save space
   const [collapsed, setCollapsed] = useState(true);
   const w = collapsed ? W_COLLAPSED : W_EXPANDED;
 
@@ -171,7 +178,6 @@ export const Sidebar = memo(({ active, set, centerName }: {
   );
 });
 
-/* Mobile header */
 export const MobileHeader = memo(({ active, set, centerName }: {
   active: Screen; set: (s: Screen) => void; centerName: string;
 }) => {
@@ -207,7 +213,6 @@ export const MobileHeader = memo(({ active, set, centerName }: {
   );
 });
 
-/* Bottom nav (mobile only) */
 export const BottomNav = memo(({ active, set }: { active: Screen; set: (s: Screen) => void }) => {
   const isDesktop = useIsDesktop();
   const navRef  = useRef<HTMLElement>(null);

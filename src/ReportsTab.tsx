@@ -7,7 +7,7 @@ import React, { useState, useMemo } from 'react';
 import { BarChart3, TrendingUp, TrendingDown, Users, BookOpen, DollarSign, Printer, School, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { fmtVND, parseDMY } from './helpers';
-import { Badge, FilterTabs } from './design-system/src';
+import { Badge, FilterTabs } from './dsComponents';
 import { StatBlock, StatGrid, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle, fmtM } from './AppComponents';
 import type { Student, Payment, Expense, SummaryData } from './types';
 

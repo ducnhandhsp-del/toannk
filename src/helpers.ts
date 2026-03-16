@@ -36,9 +36,11 @@ export const sanitizeObject = <T extends Record<string, any>>(obj: T): T => {
   if (!obj || typeof obj !== 'object') return obj;
   return Object.entries(obj).reduce((acc, [key, value]) => ({
     ...acc,
-    [key]: typeof value === 'object' && value !== null && !Array.isArray(value)
-      ? sanitizeObject(value)
-      : sanitizeInput(value),
+    [key]: Array.isArray(value)
+      ? value.map((item: any) => typeof item === 'object' && item !== null ? sanitizeObject(item) : sanitizeInput(item))
+      : typeof value === 'object' && value !== null
+        ? sanitizeObject(value)
+        : sanitizeInput(value),
   }), {} as T);
 };
 
@@ -286,13 +288,14 @@ export const saveSettings = (obj: object) => {
   try { localStorage.setItem('ltn-settings', JSON.stringify(obj)); } catch {}
 };
 
-export const FINANCE_MONTHS = (() => {
+export const getFinanceMonths = () => {
   const now = new Date();
   return Array.from({ length: 12 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
     return { m: d.getMonth() + 1, y: d.getFullYear(), label: `T${d.getMonth() + 1}` };
   });
-})();
+};
+export const FINANCE_MONTHS = getFinanceMonths();
 
 export const MONTHS_VI = [
   'Học phí tháng 1','Học phí tháng 2','Học phí tháng 3',

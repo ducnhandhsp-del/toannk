@@ -8,8 +8,8 @@
 import React, { useMemo, useState } from 'react';
 import { DollarSign, TrendingDown, Eye, Edit3, Trash2, Plus, Search, Check, X as XIcon } from 'lucide-react';
 import { fmtVND, formatDate, capitalizeName, FINANCE_MONTHS } from './helpers';
-import { Badge, Pager, FilterTabs } from './design-system/src';
-import { FAB } from './FAB';
+import { Badge, Pager, FilterTabs } from './dsComponents';
+import { FAB } from './AppComponents';
 import { StatBlock, StatGrid, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle, fmtM } from './AppComponents';
 import type { Payment, Expense, Student, SummaryData, FinanceSub } from './types';
 

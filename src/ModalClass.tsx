@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, AlertTriangle } from 'lucide-react';
-import { Button, IconButton, Input, Select } from './design-system/src';
+import { Button, IconButton, Input, Select } from './dsComponents';
 import { ModalWrap } from './UIComponents';
 import type { Student } from './types';
 import toast from 'react-hot-toast';

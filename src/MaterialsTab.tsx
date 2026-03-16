@@ -7,9 +7,9 @@
 import React, { useState, useMemo } from 'react';
 import { Library, Plus, ExternalLink, Trash2, Edit3, X, Save, BookMarked, FileText, Video, File, ChevronDown, ChevronUp } from 'lucide-react';
 import { ModalWrap, Field } from './UIComponents';
-import { Button, IconButton, Input, Select, FilterChip } from './design-system/src';
-import { HStatCard, HStatGrid } from './HStatCard';
-import { FAB } from './FAB';
+import { Button, IconButton, Input, Select, FilterChip } from './dsComponents';
+import { StatBlock as HStatCard, StatGrid as HStatGrid } from './AppComponents';
+import { FAB } from './AppComponents';
 import { TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
 import type { Material } from './types';
 

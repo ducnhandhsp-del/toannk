@@ -13,9 +13,9 @@
 import React, { useState } from 'react';
 import { UserPlus, Eye, Edit3, Trash2, ArrowRight } from 'lucide-react';
 import { IPP, capitalizeName, isStudentActive } from './helpers';
-import { ScrollHintTable, FAB } from './FAB';
+import { ScrollHintTable, FAB } from './AppComponents';
 import { TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
-import { Badge, Pager, SearchBar, Button, IconButton, TableActions, Select } from './design-system/src';
+import { Badge, Pager, SearchBar, Button, IconButton, TableActions, Select } from './dsComponents';
 import type { Student, DeleteTarget } from './types';
 
 interface Props {

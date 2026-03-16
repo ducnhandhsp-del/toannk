@@ -10,9 +10,9 @@ import React, { useState } from 'react';
 import { Users, Award, School, Phone, Mail, X, Edit3, Eye, Plus, Save, DollarSign } from 'lucide-react';
 import { fmtVND } from './helpers';
 import { ModalWrap, Field } from './UIComponents';
-import { Button, IconButton, Input, Select, SearchBar, TableActions } from './design-system/src';
+import { Button, IconButton, Input, Select, SearchBar, TableActions } from './dsComponents';
 import { StatBlock, StatGrid, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
-import { FAB } from './FAB';
+import { FAB } from './AppComponents';
 import type { Teacher } from './types';
 
 const DEMO_TEACHERS: Teacher[] = [

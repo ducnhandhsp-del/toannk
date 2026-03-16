@@ -3,8 +3,8 @@ import toast from 'react-hot-toast';
 import { X, Save, BookOpen, Calendar, Users, FileText } from 'lucide-react';
 import { formatDate, toInputDate, localDateStr } from './helpers';
 import { ModalWrap, ModalFooter } from './UIComponents';
-import { Button, IconButton, Input, Select, RadioGroup, AttendancePicker } from './design-system/src';
-import type { AttendanceStudent } from './design-system/src';
+import { Button, IconButton, Input, Select, RadioGroup, AttendancePicker } from './dsComponents';
+import type { AttendanceStudent } from './dsComponents';
 import type { Student } from './types';
 
 const FS_WRAP: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:12,overflowY:'auto',background:'rgba(15,23,42,0.65)',backdropFilter:'blur(5px)' };

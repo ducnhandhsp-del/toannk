@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn, saveSettings, makeVietQR, getCacheSize } from './helpers';
 import { ModalWrap } from './UIComponents';
-import { Button, IconButton, Input, Select } from './design-system/src';
+import { Button, IconButton, Input, Select } from './dsComponents';
 import { TABLE_WRAP } from './AppComponents';
 
 interface Props {

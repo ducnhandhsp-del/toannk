@@ -7,8 +7,8 @@
 import React, { useState } from 'react';
 import { Edit3, Clock, Plus } from 'lucide-react';
 import { resolveTeacher } from './helpers';
-import { FAB, ScrollHintTable } from './FAB';
-import { Badge, SearchBar, Select, IconButton, Button } from './design-system/src';
+import { FAB, ScrollHintTable } from './AppComponents';
+import { Badge, SearchBar, Select, IconButton, Button } from './dsComponents';
 import { AppTable, TH_SHARED, TD_SHARED, TABLE_WRAP, trStyle } from './AppComponents';
 import type { Student } from './types';
 

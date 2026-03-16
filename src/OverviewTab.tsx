@@ -91,11 +91,20 @@ function SmartAlerts({ students, tlogs, payments, curMo, curYr, isPaid, goScreen
   isPaid: (s: string, m: number, y: number) => boolean; goScreen: (s: Screen) => void;
 }) {
   const [dA, setDA] = useState(false), [dF, setDF] = useState(false);
-  const absentS = useMemo(() => students.filter(isStudentActive).map(s => {
-    const logs = tlogs.filter(l => l.classId === s.classId).slice(0, 8); let streak = 0;
-    for (const log of logs) { const a = (log.attendanceList || []).find((a: any) => (a.maHS || a['Mã HS']) === s.id); if (a && a['Trạng thái'] === 'Vắng') streak++; else if (a) break; }
-    return { ...s, streak };
-  }).filter(s => s.streak >= 2).sort((a, b) => b.streak - a.streak), [students, tlogs]);
+  const absentS = useMemo(() => {
+    const byClass = new Map<string, any[]>();
+    [...tlogs].sort((a, b) => parseDMY(b.rawDate || b.date) - parseDMY(a.rawDate || a.date))
+      .forEach(l => { if (!byClass.has(l.classId)) byClass.set(l.classId, []); byClass.get(l.classId)!.push(l); });
+    return students.filter(isStudentActive).map(s => {
+      const logs = (byClass.get(s.classId) || []).slice(0, 8);
+      let streak = 0;
+      for (const log of logs) {
+        const a = (log.attendanceList || []).find((a: any) => (a.maHS || a['Mã HS']) === s.id);
+        if (a && a['Trạng thái'] === 'Vắng') streak++; else if (a) break;
+      }
+      return { ...s, streak };
+    }).filter(s => s.streak >= 2).sort((a, b) => b.streak - a.streak);
+  }, [students, tlogs]);
   const unpaidS = useMemo(() => students.filter(s => isStudentActive(s) && !isPaid(s.id, curMo, curYr)), [students, isPaid, curMo, curYr]);
 
   const alerts = [

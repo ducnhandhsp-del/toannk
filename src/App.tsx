@@ -18,16 +18,16 @@ import type {
 } from './types';
 
 import { Sidebar, MobileHeader, BottomNav } from './Layout';
-import ErrorBoundary from './ErrorBoundary';
+import { ErrorBoundary } from './AppComponents';
 import CommandPalette from './CommandPalette';
 
-import { useCommands } from './hooks/useCommands';
+import { useCommands } from './useCommands';
 
-import {
-  StudentModal, ClassModal, FABModal, DiaryModal,
-  StudentDetailModal, DiaryDetailModal, InvoiceModal,
-  FinanceDetailModal, DeleteModal, BulkTransferModal,
-} from './GlobalModals';
+import { StudentModal, StudentDetailModal } from './ModalStudent';
+import { ClassModal, BulkTransferModal } from './ModalClass';
+import { FABModal, InvoiceModal, FinanceDetailModal } from './ModalFinance';
+import { DiaryModal, DiaryDetailModal } from './ModalDiary';
+import { DeleteModal } from './UIComponents';
 
 import OverviewTab    from './OverviewTab';
 import OperationsTab  from './OperationsTab';
@@ -267,18 +267,24 @@ export default function App() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  const lastLoadTimeRef = useRef(0);
   useEffect(() => {
-    const handleOnline = () => { silentRef.current = true; loadData(); };
-    const handleVis = () => { if (document.visibilityState === 'visible' && navigator.onLine) { silentRef.current = true; loadData(); } };
+    const reload = () => {
+      if (Date.now() - lastLoadTimeRef.current > 2 * 60 * 1000) {
+        silentRef.current = true; loadData(); lastLoadTimeRef.current = Date.now();
+      }
+    };
+    const handleOnline = () => { silentRef.current = true; loadData(); lastLoadTimeRef.current = Date.now(); };
+    const handleVis = () => { if (document.visibilityState === 'visible' && navigator.onLine) reload(); };
     window.addEventListener('online', handleOnline);
     document.addEventListener('visibilitychange', handleVis);
-    const iv = setInterval(() => { if (document.visibilityState === 'visible' && navigator.onLine) { silentRef.current = true; loadData(); } }, 5*60*1000);
+    const iv = setInterval(() => { if (document.visibilityState === 'visible' && navigator.onLine) reload(); }, 5*60*1000);
     return () => { window.removeEventListener('online', handleOnline); document.removeEventListener('visibilitychange', handleVis); clearInterval(iv); };
   }, [loadData]);
 
   
-  const curMo = useMemo(() => new Date().getMonth()+1, []);
-  const curYr = useMemo(() => new Date().getFullYear(), []);
+  const curMo = new Date().getMonth()+1;
+  const curYr = new Date().getFullYear();
 
   const paidMap = useMemo(() => {
     const m = new Map<string, Set<string>>();
@@ -352,7 +358,9 @@ export default function App() {
   
   const handleSaveStudent = useCallback(async (form: any) => withSave(async () => {
     if (!form.id?.trim()||!form.name?.trim()) throw new Error('⚠️ Mã HS và Tên là bắt buộc!');
-    if (!editStudent && students.some(s=>s.id===form.id.trim())) throw new Error(`⚠️ Mã HS "${form.id}" đã tồn tại!`);
+    const normalizedId = form.id.trim().replace(/\s+/g,'');
+    if (!editStudent && students.some(s=>s.id===normalizedId)) throw new Error(`⚠️ Mã HS "${normalizedId}" đã tồn tại!`);
+    form = { ...form, id: normalizedId };
     const formToSend = sanitizeObject({ ...form, startDate: form.startDate ? formatDate(form.startDate) : '' });
     await api({ action: editStudent ? 'updateHS' : 'saveHS', ...formToSend });
     setShowStudent(false); setEditStudent(null); silentRef.current=true; loadData();
@@ -372,7 +380,7 @@ export default function App() {
     if (!form.thangHP) throw new Error('⚠️ Vui lòng chọn tháng học phí!');
     const thangHP=Number(form.thangHP); const namHP=Number(form.namHP||new Date().getFullYear());
     const t=mkTs(form.date); const n=new Date(); const yy=n.getFullYear().toString().slice(2); const mm=(n.getMonth()+1).toString().padStart(2,'0'); const dd=n.getDate().toString().padStart(2,'0');
-    const soCT=form.docNum||`PT-${yy}${mm}${dd}-${maHS.toUpperCase()}`;
+    const soCT=form.docNum||`PT-${yy}${mm}${dd}-${maHS.toUpperCase()}-${Date.now().toString(36).slice(-4).toUpperCase()}`;
     const dateFormatted=formatDate(form.date);
     const description=`Học phí tháng ${thangHP} năm ${namHP}`;
     const clean=sanitizeObject({ ...form, maHS, soTien: Number(form.soTien), date: dateFormatted, description, thangHP, namHP });
@@ -403,13 +411,16 @@ export default function App() {
     setShowFAB(false); setEditExpense(null); silentRef.current=true; loadData();
   }, editExpense ? '✅ Đã cập nhật phiếu chi!' : '✅ Đã ghi phiếu chi!'), [withSave, editExpense, api, loadData]);
 
-  const handleSaveDiary = useCallback(async (form: any) => withSave(async () => {
-    if (!form.content?.trim()) throw new Error('⚠️ Vui lòng nhập nội dung bài dạy!');
-    const isEdit=!!form.originalDate; const clean=sanitizeObject(form);
-    const dateForGAS = formatDate(clean.date);
-    await api({ action: isEdit?'updateDaily':'saveDaily', date:dateForGAS, maLop:clean.classId, caDay:clean.caDay||'', teacherName:clean.teacherName, attendance:sanitizeAttendance(form.attendance), content:clean.content, homework:clean.homework||'---', ...(isEdit&&{ originalDate:clean.originalDate, originalClassId:clean.originalClassId, originalCaDay:clean.originalCaDay||'' }) });
-    setShowDiary(false); setEditDiary(null); setPreselectedDiaryClass(''); silentRef.current=true; loadData();
-  }, form.originalDate ? '✅ Đã cập nhật buổi dạy!' : '✅ Đã ghi buổi dạy!'), [withSave, api, loadData]);
+  const handleSaveDiary = useCallback(async (form: any) => {
+    const isEdit = !!form.originalDate;
+    return withSave(async () => {
+      if (!form.content?.trim()) throw new Error('⚠️ Vui lòng nhập nội dung bài dạy!');
+      const clean=sanitizeObject(form);
+      const dateForGAS = formatDate(clean.date);
+      await api({ action: isEdit?'updateDaily':'saveDaily', date:dateForGAS, maLop:clean.classId, caDay:clean.caDay||'', teacherName:clean.teacherName, attendance:sanitizeAttendance(form.attendance), content:clean.content, homework:clean.homework||'---', ...(isEdit&&{ originalDate:clean.originalDate, originalClassId:clean.originalClassId, originalCaDay:clean.originalCaDay||'' }) });
+      setShowDiary(false); setEditDiary(null); setPreselectedDiaryClass(''); silentRef.current=true; loadData();
+    }, isEdit ? '✅ Đã cập nhật buổi dạy!' : '✅ Đã ghi buổi dạy!');
+  }, [withSave, api, loadData]);
 
   const handleDelete = useCallback(async () => {
     if (!delTarget) return;

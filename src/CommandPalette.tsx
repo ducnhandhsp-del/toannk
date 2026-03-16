@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, X, Command } from 'lucide-react';
 import { cn } from './helpers';
-import type { Command as Cmd } from './hooks/useCommands';
+import type { Command as Cmd } from './useCommands';
 
 interface CommandPaletteProps {
   open:     boolean;
