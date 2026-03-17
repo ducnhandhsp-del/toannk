@@ -210,7 +210,7 @@ export default function StudentsTab({
             <div style={{ padding: '40px 16px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: 36 }}>👤</span>
               <p style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, margin: 0 }}>Không có học sinh nào</p>
-              <button onClick={onAddStudent} style={{ padding: '8px 18px', background: '#6366f1', color: 'white', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>+ Thêm học sinh</button>
+              <button onClick={onAddStudent} style={{ padding: '8px 18px', background: '#6366f1', color: '#64748b', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>+ Thêm học sinh</button>
             </div>
           ) : paged.map((s, i) => {
             const inactive  = !isStudentActive(s);
@@ -219,7 +219,7 @@ export default function StudentsTab({
               <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px', borderBottom: '1px solid #f1f5f9', background: i % 2 === 0 ? 'white' : '#f9fafc', opacity: inactive ? 0.55 : 1 }}>
                 {/* Avatar circle */}
                 <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ color: 'white', fontWeight: 800, fontSize: 14 }}>{(s.name||'?').trim().split(' ').pop()?.[0]?.toUpperCase()}</span>
+                  <span style={{ color: '#64748b', fontWeight: 800, fontSize: 14 }}>{(s.name||'?').trim().split(' ').pop()?.[0]?.toUpperCase()}</span>
                 </div>
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>

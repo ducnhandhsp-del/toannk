@@ -59,15 +59,15 @@ export function StudentModal({
   return (
     <div style={MODAL_STYLE}>
       <div style={DIALOG_STYLE}>
-        <div style={{ padding:'22px 32px',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',justifyContent:'space-between',background:'linear-gradient(135deg,#eef2ff,#f5f3ff)',flexShrink:0 }}>
+        <div style={{ padding:'18px 24px',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',justifyContent:'space-between',background:'white',flexShrink:0 }}>
           <div>
-            <h3 style={{ fontSize:20,fontWeight:800,color:'#0f172a',margin:0 }}>{editing?'Sửa thông tin học sinh':'Thêm học sinh mới'}</h3>
-            <p style={{ fontSize:13,color:'#6366f1',fontWeight:600,margin:'2px 0 0' }}>Điền đầy đủ thông tin bên dưới</p>
+            <h3 style={{ fontSize:17,fontWeight:800,color:'#0f172a',margin:0 }}>{editing?'Sửa thông tin học sinh':'Thêm học sinh mới'}</h3>
+            <p style={{ fontSize:12,color:'#64748b',fontWeight:500,margin:'2px 0 0' }}>Điền đầy đủ thông tin bên dưới</p>
           </div>
           <IconButton icon={<X size={20}/>} label="Đóng" onClick={onClose}/>
         </div>
 
-        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'26px 32px' }}>
+        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'18px 24px' }}>
           <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:18 }}>
             <Input label="Mã HS *" value={f.id||''} onChange={v=>u('id',v)} placeholder="HS001" error={errors.id} disabled={!!editing} size="lg"/>
             <Input label="Họ và tên *" value={f.name||''} onChange={v=>u('name',v)} placeholder="Nguyễn Văn A" error={errors.name} size="lg"/>
@@ -90,7 +90,7 @@ export function StudentModal({
           )}
         </div>
 
-        <div style={{ padding:'18px 32px',borderTop:'1px solid #f1f5f9',display:'flex',justifyContent:'flex-end',gap:12,flexShrink:0 }}>
+        <div style={{ padding:'14px 24px',borderTop:'1px solid #f1f5f9',display:'flex',justifyContent:'flex-end',gap:10,flexShrink:0 }}>
           <Button variant="outline" intent="neutral" size="lg" onClick={onClose}>Hủy</Button>
           <Button intent="primary" size="lg" loading={isSaving} icon={<Save size={16}/>} onClick={handleSave}>
             {editing?'Cập nhật':'Thêm mới'}
@@ -128,10 +128,10 @@ export function StudentDetailModal({ student, onClose, tlogs, payments, onToggle
   return (
     <div style={MODAL_STYLE}>
       <div style={{ ...DIALOG_STYLE, maxWidth:720 }}>
-        <div style={{ padding:'22px 32px',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',gap:14,background:'linear-gradient(135deg,#f0fdf4,#dcfce7)',flexShrink:0 }}>
+        <div style={{ padding:'18px 24px',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',gap:14,background:'white',flexShrink:0 }}>
           <div style={{ flex:1,minWidth:0 }}>
-            <h3 style={{ fontSize:20,fontWeight:800,color:'#0f172a',margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{capitalizeName(s.name)}</h3>
-            <p style={{ fontSize:15,color:'#0d9488',fontWeight:700,margin:'3px 0 0' }}>{s.id} · Lớp {s.classId}</p>
+            <h3 style={{ fontSize:17,fontWeight:800,color:'#0f172a',margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{capitalizeName(s.name)}</h3>
+            <p style={{ fontSize:13,color:'#6366f1',fontWeight:600,margin:'3px 0 0' }}>{s.id} · Lớp {s.classId}</p>
             {isInactive&&<span style={{ display:'inline-block',marginTop:5,fontSize:12,fontWeight:700,color:'#e11d48',background:'#fff1f2',border:'1px solid #fecaca',padding:'3px 10px',borderRadius:6,textTransform:'uppercase' }}>Đã nghỉ học</span>}
           </div>
           <div style={{ display:'flex',alignItems:'center',gap:8,flexShrink:0 }}>
@@ -150,7 +150,7 @@ export function StudentDetailModal({ student, onClose, tlogs, payments, onToggle
           </div>
         </div>
 
-        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'22px 32px' }}>
+        <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'16px 24px' }}>
           <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
             {fields.map((item,i)=>(
               <div key={i} style={{ padding:'11px 14px',borderRadius:8,background:'#f8fafc',border:'1px solid #f1f5f9',gridColumn:(item.l==='Mục tiêu'||item.l==='Cần hỗ trợ')?'1/-1':'auto' }}>
@@ -200,7 +200,7 @@ export function StudentDetailModal({ student, onClose, tlogs, payments, onToggle
           )}
         </div>
 
-        <div style={{ padding:'16px 32px',borderTop:'1px solid #f1f5f9',display:'flex',gap:12,flexShrink:0 }}>
+        <div style={{ padding:'14px 24px',borderTop:'1px solid #f1f5f9',display:'flex',gap:10,flexShrink:0 }}>
           {ph.length>=9&&<>
             <a href={`tel:${ph}`} style={{ flex:1 }}><Button variant="outline" intent="success" fullWidth size="lg">📞 Gọi điện</Button></a>
             <a href={`https://zalo.me/${ph}`} target="_blank" rel="noopener noreferrer" style={{ flex:1,textDecoration:'none' }}><Button variant="outline" intent="primary" fullWidth size="lg">💬 Zalo PH</Button></a>

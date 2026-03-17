@@ -1,13 +1,13 @@
 import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { Toaster } from 'react-hot-toast'
+import './index.css'
+import App from './App.tsx'
 import { initFontCheck } from './fontCheck'
 
 // Kiểm tra font tiếng Việt ngay khi app khởi động
 // Log warning nếu Google Fonts không load được (WebView/offline)
 initFontCheck()
-import { createRoot } from 'react-dom/client'
-import { Toaster } from 'react-hot-toast'
-import './index.css'
-import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

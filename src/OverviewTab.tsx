@@ -77,7 +77,7 @@ function TodaySchedule({ uClasses }: { uClasses: any[] }) {
   if (!nhan && !kien) return null;
 
   return (
-    <div style={{ border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+    <div style={{ border: '1px solid #e8edf2', borderRadius: 10, overflow: 'hidden', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
       {nhan && <BannerRow teacherName={nhan} classes={nhanClasses} color="#6366f1" bg="#f5f3ff" border="#ddd6fe" />}
       {kien && nhan && <div style={{ height: 1, background: '#e2e8f0' }} />}
       {kien && <BannerRow teacherName={kien} classes={kienClasses} color="#059669" bg="#ecfdf5" border="#a7f3d0" />}
@@ -220,7 +220,7 @@ export default function OverviewTab({
         <div style={{ ...TABLE_WRAP, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 14 }}>📖</span>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.06em', flex: 1, margin: 0 }}>Dạy học gần đây</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1, margin: 0 }}>Dạy học gần đây</p>
             <button onClick={() => goScreen('operations')} style={{ fontSize: 11, fontWeight: 700, color: '#6366f1', background: 'none', border: 'none', cursor: 'pointer' }}>Nhật ký →</button>
           </div>
           <div style={{ maxHeight: 260, overflowY: 'auto', flex: 1 }}>
@@ -246,7 +246,7 @@ export default function OverviewTab({
         <div style={{ ...TABLE_WRAP, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '10px 14px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 14 }}>💰</span>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.06em', flex: 1, margin: 0 }}>Tài chính gần đây</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1, margin: 0 }}>Tài chính gần đây</p>
             <button onClick={() => goScreen('finance')} style={{ fontSize: 11, fontWeight: 700, color: '#059669', background: 'none', border: 'none', cursor: 'pointer' }}>Xem →</button>
           </div>
           <div style={{ maxHeight: 260, overflowY: 'auto', flex: 1 }}>

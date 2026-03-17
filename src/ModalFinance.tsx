@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, Save, DollarSign, Printer, Check, Calendar, StickyNote, TrendingUp, TrendingDown } from 'lucide-react';
 import { fmtVND, formatDate, makeVietQR, BANK_DEFAULT, toInputDate, localDateStr } from './helpers';
-import { ModalWrap, DS } from './UIComponents';
+
 import { Button, IconButton, Input, Select, RadioGroup, FilterTabs } from './dsComponents';
 import type { Student, Payment } from './types';
 
@@ -12,13 +12,14 @@ const FS_WRAP_DT: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,di
 const FS_DLG_DT: React.CSSProperties  = { background:'white',width:'100%',maxWidth:780,maxHeight:'94vh',borderRadius:14,display:'flex',flexDirection:'column',boxShadow:'0 24px 80px rgba(0,0,0,0.28)',overflow:'hidden' };
 
 function SBox({ color, iconColor, icon:Icon, title, children }: { color:string; iconColor:string; icon:any; title:string; children:React.ReactNode }) {
+  // Style sạch, không màu sắc rườm rà
   return (
-    <div style={{ borderRadius:10,border:`1.5px solid ${color}33`,background:`${color}06` }}>
-      <div style={{ display:'flex',alignItems:'center',gap:8,padding:'10px 16px',borderBottom:`1.5px solid ${color}22`,background:`${color}0a`,borderRadius:'9px 9px 0 0' }}>
+    <div style={{ borderRadius:10, border:'1px solid #e8edf2', background:'white' }}>
+      <div style={{ display:'flex',alignItems:'center',gap:8,padding:'10px 14px',borderBottom:'1px solid #f1f5f9',background:'#F5F7FA',borderRadius:'9px 9px 0 0' }}>
         <Icon size={14} color={iconColor}/>
-        <span style={{ fontSize:11,fontWeight:700,color:iconColor,textTransform:'uppercase',letterSpacing:'0.1em' }}>{title}</span>
+        <span style={{ fontSize:11,fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.08em' }}>{title}</span>
       </div>
-      <div style={{ padding:'14px 16px',display:'flex',flexDirection:'column',gap:14 }}>{children}</div>
+      <div style={{ padding:'14px 16px',display:'flex',flexDirection:'column',gap:12 }}>{children}</div>
     </div>
   );
 }
@@ -62,21 +63,17 @@ export function FABModal({
   const yearOptions=[curYr-1,curYr,curYr+1].map(y=>({value:String(y),label:String(y)}));
   const methodOptions=[{value:'Chuyển khoản',label:'Chuyển khoản'},{value:'Tiền mặt',label:'Tiền mặt'}];
   const categoryOptions=['Vận hành','In ấn','Trang thiết bị','Lương','Khác'].map(v=>({value:v,label:v}));
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const wrapStyle = isMobile ? FS_WRAP : FS_WRAP_DT;
-  const dlgStyle  = isMobile ? FS_DLG  : FS_DLG_DT;
-
   return (
-    <div style={wrapStyle}>
-      <div style={dlgStyle}>
-        <div style={{ padding:'16px 20px',background:headerGrad,borderBottom:`1.5px solid ${accentColor}22`,display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
+    <div style={FS_WRAP}>
+      <div style={FS_DLG}>
+        <div style={{ padding:'16px 20px',background:'white',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
           <div style={{ display:'flex',alignItems:'center',gap:14 }}>
-            <div style={{ width:44,height:44,borderRadius:12,background:accentColor,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 4px 14px ${accentColor}44` }}>
-              {isIncome?<TrendingUp size={20} color="white"/>:<TrendingDown size={20} color="white"/>}
+            <div style={{ width:40,height:40,borderRadius:10,background:accentColor+'15',display:'flex',alignItems:'center',justifyContent:'center' }}>
+              {isIncome?<TrendingUp size={20} color={accentColor}/>:<TrendingDown size={20} color={accentColor}/>}
             </div>
             <div>
-              <h3 style={{ fontSize:18,fontWeight:800,color:'#0f172a',margin:0 }}>{isEditing?(isIncome?'Sửa phiếu thu':'Sửa phiếu chi'):(isIncome?'Ghi phiếu thu':'Ghi phiếu chi')}</h3>
-              <p style={{ fontSize:13,color:accentColor,fontWeight:600,margin:0 }}>{isIncome?'Thu học phí từ học sinh':'Ghi nhận chi phí vận hành'}</p>
+              <h3 style={{ fontSize:16,fontWeight:800,color:'#0f172a',margin:0 }}>{isEditing?(isIncome?'Sửa phiếu thu':'Sửa phiếu chi'):(isIncome?'Ghi phiếu thu':'Ghi phiếu chi')}</h3>
+              <p style={{ fontSize:12,color:'#64748b',fontWeight:500,margin:0 }}>{isIncome?'Thu học phí từ học sinh':'Ghi nhận chi phí vận hành'}</p>
             </div>
           </div>
           <IconButton icon={<X size={18}/>} label="Đóng" onClick={onClose}/>

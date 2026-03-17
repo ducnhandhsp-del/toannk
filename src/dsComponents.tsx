@@ -198,22 +198,68 @@ const ST_CFG:Record<AttendanceStatus,{label:string;bg:string;border:string;color
 export function AttendancePicker({students,onChange,readOnly=false}:AttendancePickerProps){
   const update=(id:string,status:AttendanceStatus)=>onChange(students.map(s=>s.id===id?{...s,status}:s));
   const bulkSet=(status:AttendanceStatus)=>onChange(students.map(s=>({...s,status})));
-  const counts={present:students.filter(s=>s.status==='present').length,late:students.filter(s=>s.status==='late').length,absent:students.filter(s=>s.status==='absent').length};
+  const counts={
+    present:students.filter(s=>s.status==='present').length,
+    late:students.filter(s=>s.status==='late').length,
+    absent:students.filter(s=>s.status==='absent').length,
+  };
   return(
-    <div style={{display:'flex',flexDirection:'column',gap:12}}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
-        <div style={{display:'flex',gap:8}}>{(['present','late','absent'] as AttendanceStatus[]).map(s=>{const c=ST_CFG[s];return<span key={s} style={{display:'inline-flex',alignItems:'center',gap:5,padding:'5px 10px',borderRadius:radius.md,background:c.bg,border:`1px solid ${c.border}`,fontSize:12,fontWeight:700,color:c.color}}>{c.label}: {counts[s]}</span>;})}</div>
-        {!readOnly&&<div style={{display:'flex',gap:6}}>{(['present','late','absent'] as AttendanceStatus[]).map(s=>{const c=ST_CFG[s];return<button key={s} onClick={()=>bulkSet(s)} style={{padding:'5px 10px',borderRadius:radius.sm,border:`1px solid ${c.border}`,background:c.bg,color:c.color,fontWeight:700,fontSize:11,cursor:'pointer'}}>{c.label}: Tất cả</button>;})}</div>}
-      </div>
-      <div style={{background:'white',borderRadius:radius.lg,border:`1px solid ${colors.neutral[200]}`,overflow:'hidden'}}>
-        {students.map((s,idx)=>(
-          <div key={s.id} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 16px',borderBottom:idx<students.length-1?`1px solid ${colors.neutral[50]}`:'none',background:idx%2===0?'white':colors.neutral[50]}}>
-            <span style={{fontSize:11,fontWeight:700,color:colors.neutral[300],width:20,textAlign:'center'}}>{idx+1}</span>
-            <div style={{flex:1,minWidth:0}}><p style={{fontSize:13,fontWeight:700,color:colors.neutral[900],margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.name}</p><p style={{fontSize:11,color:colors.neutral[400],margin:0}}>{s.id}</p></div>
-            <div style={{display:'flex',gap:4}}>{(['present','late','absent'] as AttendanceStatus[]).map(st=>{const c=ST_CFG[st],isActive=s.status===st;return<button key={st} onClick={readOnly?undefined:()=>update(s.id,st)} disabled={readOnly} style={{padding:'5px 10px',borderRadius:radius.sm,border:`1.5px solid ${isActive?c.activeBg:c.border}`,background:isActive?c.activeBg:c.bg,color:isActive?'white':c.color,fontWeight:700,fontSize:11,cursor:readOnly?'default':'pointer',transition:transition.fast,boxShadow:isActive?shadows.sm:'none'}}>{c.label}</button>;})}
-            </div>
+    <div style={{display:'flex',flexDirection:'column',gap:10}}>
+      {/* Dòng tổng kết + nút chọn tất cả */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:6}}>
+        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+          {(['present','late','absent'] as AttendanceStatus[]).map(s=>{const c=ST_CFG[s];return(
+            <span key={s} style={{display:'inline-flex',alignItems:'center',gap:4,padding:'4px 9px',borderRadius:999,background:c.bg,border:`1px solid ${c.border}`,fontSize:12,fontWeight:700,color:c.color}}>
+              {c.label}: {counts[s]}
+            </span>
+          );})}
+        </div>
+        {!readOnly&&(
+          <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+            {(['present','late','absent'] as AttendanceStatus[]).map(s=>{const c=ST_CFG[s];return(
+              <button key={s} onClick={()=>bulkSet(s)} style={{padding:'3px 8px',borderRadius:999,border:`1px solid ${c.border}`,background:c.bg,color:c.color,fontWeight:700,fontSize:10,cursor:'pointer'}}>
+                Tất cả: {c.label}
+              </button>
+            );})}
           </div>
-        ))}
+        )}
+      </div>
+      {/* Danh sách học sinh — tên KHÔNG bị cắt */}
+      <div style={{background:'white',borderRadius:radius.lg,border:`1px solid ${colors.neutral[200]}`,overflow:'hidden'}}>
+        {students.map((s,idx)=>{
+          const activeStatus=ST_CFG[s.status];
+          return(
+            <div key={s.id} style={{padding:'10px 14px',borderBottom:idx<students.length-1?`1px solid ${colors.neutral[100]}`:'none',background:idx%2===0?'white':colors.neutral[50]}}>
+              {/* Hàng 1: STT + Tên đầy đủ + Mã */}
+              <div style={{display:'flex',alignItems:'flex-start',gap:8,marginBottom:readOnly?0:8}}>
+                <span style={{fontSize:11,fontWeight:700,color:colors.neutral[300],width:18,flexShrink:0,textAlign:'center',paddingTop:2}}>{idx+1}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <p style={{fontSize:13,fontWeight:700,color:colors.neutral[900],margin:0,lineHeight:1.4,wordBreak:'break-word'}}>{s.name}</p>
+                  <p style={{fontSize:11,color:colors.neutral[400],margin:'1px 0 0'}}>{s.id}</p>
+                </div>
+                {readOnly&&(
+                  <span style={{padding:'3px 9px',borderRadius:999,background:activeStatus.bg,border:`1px solid ${activeStatus.border}`,fontSize:11,fontWeight:700,color:activeStatus.color,flexShrink:0,whiteSpace:'nowrap'}}>
+                    {activeStatus.label}
+                  </span>
+                )}
+              </div>
+              {/* Hàng 2: 3 nút trạng thái — chiều rộng đều nhau */}
+              {!readOnly&&(
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:6,paddingLeft:26}}>
+                  {(['present','late','absent'] as AttendanceStatus[]).map(st=>{
+                    const c=ST_CFG[st],isActive=s.status===st;
+                    return(
+                      <button key={st} onClick={()=>update(s.id,st)}
+                        style={{padding:'7px 4px',borderRadius:8,border:`1.5px solid ${isActive?c.activeBg:c.border}`,background:isActive?c.activeBg:c.bg,color:isActive?'white':c.color,fontWeight:700,fontSize:12,cursor:'pointer',transition:'all 0.12s',boxShadow:isActive?'0 2px 6px rgba(0,0,0,0.12)':'none',textAlign:'center'}}>
+                        {c.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

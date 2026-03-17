@@ -516,7 +516,7 @@ export default function App() {
 
   
   if (loading) return (
-    <div style={{ minHeight:'100dvh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#f8fafc', gap:16 }}>
+    <div style={{ minHeight:'100dvh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#F0F2F5', gap:16 }}>
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-xl">
         <GraduationCap size={32} className="text-white animate-bounce" />
       </div>
@@ -527,7 +527,7 @@ export default function App() {
 
   
   return (
-    <div style={{ minHeight: '100dvh', background: '#f8fafc', fontFamily: 'inherit' }}>
+    <div style={{ minHeight: '100dvh', background: '#F0F2F5', fontFamily: 'inherit' }}>
       <div style={{ display: 'flex' }}>
         {/* Sidebar desktop */}
         <Sidebar active={screen} set={goScreen} centerName={centerName} />

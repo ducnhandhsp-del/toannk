@@ -48,10 +48,10 @@ function TeacherTimetable({ teacherName, uClasses }: { teacherName: string; uCla
 
   return (
     <div style={{ border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-      <div style={{ padding: '10px 14px', background: 'linear-gradient(135deg,#0f1f3d,#1e3a5f)', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ padding: '10px 14px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.12)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BookOpen size={13} color="white" /></div>
         <div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: 'white', margin: 0 }}>TKB — {teacherName}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#64748b', margin: 0 }}>TKB — {teacherName}</p>
           <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: 0 }}>{myClasses.length} lớp phụ trách</p>
         </div>
       </div>
@@ -200,7 +200,7 @@ export default function OperationsTab({ filtD, pgD, setPgD, qD, setQD, dCls, set
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
                         <span style={{ fontSize: 36 }}>📖</span>
                         <p style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 14, margin: 0 }}>Chưa có nhật ký nào</p>
-                        <button onClick={onAddDiary} style={{ padding: '7px 18px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 6 }}>+ Ghi buổi đầu tiên</button>
+                        <button onClick={onAddDiary} style={{ padding: '7px 18px', background: '#7c3aed', color: '#64748b', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 6 }}>+ Ghi buổi đầu tiên</button>
                       </div>
                     </td></tr>
                   : paged.map((l, i) => (
@@ -234,7 +234,7 @@ export default function OperationsTab({ filtD, pgD, setPgD, qD, setQD, dCls, set
               ? <div style={{ padding: '40px 16px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 32 }}>📖</span>
                   <p style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, margin: 0 }}>Chưa có nhật ký nào</p>
-                  <button onClick={onAddDiary} style={{ padding: '8px 18px', background: '#7c3aed', color: 'white', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 8 }}>+ Ghi buổi đầu tiên</button>
+                  <button onClick={onAddDiary} style={{ padding: '8px 18px', background: '#7c3aed', color: '#64748b', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', borderRadius: 8 }}>+ Ghi buổi đầu tiên</button>
                 </div>
               : paged.map((l, i) => (
                 <div key={i} style={{ padding: '12px 14px', borderBottom: '1px solid #f1f5f9', background: i % 2 === 0 ? 'white' : '#f9fafc' }}>

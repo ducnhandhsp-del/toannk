@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { X, Save, BookOpen, Calendar, Users, FileText } from 'lucide-react';
 import { formatDate, toInputDate, localDateStr } from './helpers';
-import { ModalWrap, ModalFooter } from './UIComponents';
-import { Button, IconButton, Input, Select, RadioGroup, AttendancePicker } from './dsComponents';
+
+import { Button, IconButton, Input, Select, AttendancePicker } from './dsComponents';
 import type { AttendanceStudent } from './dsComponents';
 import type { Student } from './types';
 
@@ -15,10 +15,10 @@ const FS_DLG_DT: React.CSSProperties  = { background:'white',width:'100%',maxWid
 
 function SBox({ color, icon:Icon, title, children }: { color:string; icon:any; title:string; children:React.ReactNode }) {
   return (
-    <div style={{ borderRadius:8, border:'1.5px solid #e2e8f0', overflow:'hidden' }}>
-      <div style={{ display:'flex',alignItems:'center',gap:8,padding:'9px 14px',background:`${color}08`,borderBottom:`1.5px solid ${color}22` }}>
+    <div style={{ borderRadius:8, border:'1px solid #e8edf2', overflow:'hidden', background:'white' }}>
+      <div style={{ display:'flex',alignItems:'center',gap:8,padding:'9px 14px',background:'#F5F7FA',borderBottom:'1px solid #e8edf2' }}>
         <Icon size={13} color={color}/>
-        <span style={{ fontSize:11,fontWeight:700,color,textTransform:'uppercase',letterSpacing:'0.08em' }}>{title}</span>
+        <span style={{ fontSize:11,fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.08em' }}>{title}</span>
       </div>
       <div style={{ padding:'14px',display:'flex',flexDirection:'column',gap:12 }}>{children}</div>
     </div>
@@ -60,10 +60,6 @@ export function DiaryModal({
   const caList=caDayOptions.length>0?caDayOptions:['7h30','9h','13h30','15h30','17h30','19h30'];
   const classOptions=uniqueClasses.map(c=>({value:c['Mã Lớp'],label:`Lớp ${c['Mã Lớp']}`}));
   const caOptions=[{value:'',label:'-- Chọn ca dạy --'},...caList.map(ca=>({value:ca,label:`⏰ ${ca}`}))];
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const wrapStyle = isMobile ? FS_WRAP : FS_WRAP_DT;
-  const dlgStyle  = isMobile ? FS_DLG  : FS_DLG_DT;
-
   // Attendance
   const attStudents: AttendanceStudent[] = cls.map(s=>({
     id:s.id, name:s.name,
@@ -86,12 +82,12 @@ export function DiaryModal({
   };
 
   return (
-    <div style={wrapStyle}>
-      <div style={dlgStyle}>
+    <div style={FS_WRAP}>
+      <div style={FS_DLG}>
         {/* Header */}
-        <div style={{ padding:'16px 20px',borderBottom:'1.5px solid #f1f5f9',background:'linear-gradient(135deg,#eef2ff,#f5f3ff)',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
+        <div style={{ padding:'16px 20px',borderBottom:'1px solid #f1f5f9',background:'white',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
           <div style={{ display:'flex',alignItems:'center',gap:10 }}>
-            <div style={{ width:36,height:36,borderRadius:9,background:'linear-gradient(135deg,#6366f1,#8b5cf6)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 12px rgba(99,102,241,0.3)' }}><BookOpen size={16} color="white"/></div>
+            <div style={{ width:36,height:36,borderRadius:9,background:'#eef2ff',display:'flex',alignItems:'center',justifyContent:'center' }}><BookOpen size={16} color="#6366f1"/></div>
             <div>
               <h3 style={{ fontSize:15,fontWeight:800,color:'#0f172a',margin:0 }}>{editingLog?'Cập nhật buổi dạy':'Ghi buổi dạy mới'}</h3>
               {classId&&<p style={{ fontSize:11,color:'#6366f1',fontWeight:600,margin:0 }}>Lớp {classId} · {cls.length} học sinh</p>}
@@ -160,18 +156,18 @@ export function DiaryDetailModal({ log, onClose }: { log:any; onClose:()=>void }
   return (
     <div style={FS_WRAP}>
       <div style={{ ...FS_DLG, maxWidth:560 }}>
-        <div style={{ background:'linear-gradient(135deg,#6366f1,#8b5cf6)',padding:'18px 24px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
+        <div style={{ background:'#F8FAFC',borderBottom:'1px solid #E2E8F0',padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0 }}>
           <div style={{ display:'flex',alignItems:'center',gap:12 }}>
-            <div style={{ width:40,height:40,borderRadius:10,background:'rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center' }}><BookOpen size={20} color="white"/></div>
+            <div style={{ width:38,height:38,borderRadius:10,background:'#EEF2FF',display:'flex',alignItems:'center',justifyContent:'center' }}><BookOpen size={18} color="#4F46E5"/></div>
             <div>
               <div style={{ display:'flex',alignItems:'center',gap:7,marginBottom:2 }}>
                 <span style={{ background:'rgba(255,255,255,0.2)',color:'white',fontSize:11,fontWeight:700,padding:'2px 8px',borderRadius:5 }}>{l.classId}</span>
-                {l.caDay&&<span style={{ background:'rgba(255,255,255,0.15)',color:'rgba(255,255,255,0.9)',fontSize:11,fontWeight:600,padding:'2px 8px',borderRadius:5 }}>⏰ {l.caDay}</span>}
+                {l.caDay&&<span style={{ background:'#FEF3C7',color:'#B45309',fontSize:11,fontWeight:600,padding:'2px 8px',borderRadius:5 }}>⏰ {l.caDay}</span>}
               </div>
-              <p style={{ color:'rgba(255,255,255,0.8)',fontSize:13,margin:0,fontWeight:500 }}>{formatDate(l.date)}</p>
+              <p style={{ color:'#64748B',fontSize:13,margin:0,fontWeight:500 }}>{formatDate(l.date)}</p>
             </div>
           </div>
-          <button onClick={onClose} style={{ width:32,height:32,borderRadius:8,background:'rgba(255,255,255,0.2)',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center' }}><X size={14} color="white"/></button>
+          <button onClick={onClose} style={{ width:32,height:32,borderRadius:8,background:'#F1F5F9',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center' }}><X size={14} color="#64748B"/></button>
         </div>
         <div style={{ flex:1,minHeight:0,overflowY:'auto',padding:'16px 24px',display:'flex',flexDirection:'column',gap:12 }}>
           <div style={{ display:'flex',gap:8 }}>

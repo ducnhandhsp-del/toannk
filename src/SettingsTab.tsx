@@ -67,7 +67,7 @@ function TagList({ items, setItems, placeholder }: { items: string[]; setItems: 
     <div style={{ display:'flex', flexDirection:'column', gap:7 }}>
       <div style={{ display:'flex', gap:7 }}>
         <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key==='Enter'&&(e.preventDefault(),add())} placeholder={placeholder} style={{ ...INP, flex:1, fontSize:12 }}/>
-        <button onClick={add} style={{ padding:'8px 12px', background:'#6366f1', color:'white', border:'none', cursor:'pointer', fontWeight:700, fontSize:12 }}><Plus size={14}/></button>
+        <button onClick={add} style={{ padding:'8px 12px', background:'#6366f1', color:'#64748b', border:'none', cursor:'pointer', fontWeight:700, fontSize:12 }}><Plus size={14}/></button>
       </div>
       <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
         {items.map((item, i) => (
@@ -144,11 +144,11 @@ function TemplateModal({ open, onClose, initial, onSave }: { open:boolean; onClo
 function Section({ icon: Icon, title, color='#6366f1', children }: { icon:any; title:string; color?:string; children:React.ReactNode }) {
   return (
     <div style={{ ...TABLE_WRAP, marginBottom: 0 }}>
-      <div style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 16px', background:'#1e3a5f', borderBottom:'2px solid #0f2d4a' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 16px', background:'#F5F7FA', borderBottom:'1px solid #e8edf2' }}>
         <div style={{ width:30, height:30, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.15)', flexShrink:0 }}>
           <Icon size={14} color="white"/>
         </div>
-        <h3 style={{ fontSize:12, fontWeight:700, color:'white', textTransform:'uppercase', letterSpacing:'0.08em', margin:0 }}>{title}</h3>
+        <h3 style={{ fontSize:12, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', margin:0 }}>{title}</h3>
       </div>
       <div style={{ padding:18 }}>{children}</div>
     </div>
@@ -278,8 +278,8 @@ export default function SettingsTab({
       {/* ── Left nav ── */}
       <div style={{ width:160, flexShrink:0, position:'sticky', top:20 }}>
         <div style={{ border:'1px solid #e2e8f0', overflow:'hidden', marginBottom:12 }}>
-          <div style={{ padding:'10px 14px', background:'#1e3a5f' }}>
-            <p style={{ fontSize:11, fontWeight:700, color:'white', textTransform:'uppercase', letterSpacing:'0.08em', margin:0 }}>Cài đặt</p>
+          <div style={{ padding:'10px 14px', background:'#F5F7FA' }}>
+            <p style={{ fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', margin:0 }}>Cài đặt</p>
           </div>
           {navItems.map(item => (
             <button key={item.id} onClick={() => setActiveSection(item.id)} style={{ width:'100%', display:'flex', alignItems:'center', gap:9, padding:'10px 14px', background:activeSection===item.id?'#eef2ff':'white', border:'none', borderBottom:'1px solid #f1f5f9', cursor:'pointer', textAlign:'left', fontWeight:activeSection===item.id?700:500, fontSize:13, color:activeSection===item.id?'#4338ca':'#475569', transition:'all 0.12s' }}>

@@ -20,6 +20,9 @@ export const NAV_ITEMS: {
   { id: 'settings',    label: 'Cài đặt',    shortLabel: 'Cài đặt',   icon: Settings,        color: 'text-slate-400' },
 ];
 
+// Bottom nav chỉ hiển thị 5 tab quan trọng nhất trên mobile
+export const BOTTOM_NAV_IDS: Screen[] = ['operations','materials','finance','reports','settings'];
+
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth >= 768 : true
@@ -190,19 +193,20 @@ export const MobileHeader = memo(({ active, set, centerName }: {
     <>
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 60, height: 50,
-        background: 'linear-gradient(180deg,#0f1f3d,#0a1628)',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        background: 'white',
+        borderBottom: '1px solid #e8edf2',
         display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
       }} className="print:hidden">
-        <button onClick={() => setOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', padding: 4, display: 'flex' }}>
+        <button onClick={() => setOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 4, display: 'flex' }}>
           <Menu size={19} />
         </button>
-        <button onClick={() => set('overview')} title="Về Tổng quan" style={{ width: 26, height: 26, borderRadius: 7, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: 'none', cursor: 'pointer', padding: 0 }}>
+        <button onClick={() => set('overview')} title="Về Tổng quan" style={{ width: 26, height: 26, borderRadius: 7, background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: 'none', cursor: 'pointer', padding: 0 }}>
           <GraduationCap size={13} color="white" />
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 800, color: '#fff', fontSize: 12 }}>{centerName}</div>
-          {currentItem && <div style={{ fontSize: 9, color: 'rgba(147,197,253,0.7)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{currentItem.label}</div>}
+          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 13 }}>{centerName}</div>
+          {currentItem && <div style={{ fontSize: 9, color: '#6366f1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{currentItem.label}</div>}
         </div>
       </header>
       {open && <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }} />}
@@ -213,29 +217,50 @@ export const MobileHeader = memo(({ active, set, centerName }: {
   );
 });
 
+// Chỉ 5 tab quan trọng trên bottom nav mobile
+const BOTTOM_NAV_ITEMS = NAV_ITEMS.filter(n =>
+  ['operations','materials','finance','reports','settings'].includes(n.id)
+);
+
 export const BottomNav = memo(({ active, set }: { active: Screen; set: (s: Screen) => void }) => {
   const isDesktop = useIsDesktop();
-  const navRef  = useRef<HTMLElement>(null);
-  const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  useEffect(() => {
-    const btn = btnRefs.current[active];
-    if (btn && navRef.current) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }, [active]);
   if (isDesktop) return null;
   return (
     <>
-      <style>{`.ltn-bnav::-webkit-scrollbar{display:none}`}</style>
-      <nav ref={navRef} className="ltn-bnav print:hidden"
-        style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50, background: 'linear-gradient(180deg,#0f1f3d,#0a1628)', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'stretch', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 'env(safe-area-inset-bottom,0px)' }}>
-        {NAV_ITEMS.map(({ id, shortLabel = '', icon: Icon, color }) => {
+      <nav className="ltn-bnav print:hidden"
+        style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
+          background: 'white',
+          borderTop: '1px solid #e8edf2',
+          display: 'flex', alignItems: 'stretch',
+          paddingBottom: 'env(safe-area-inset-bottom,0px)',
+          boxShadow: '0 -2px 12px rgba(0,0,0,0.08)',
+        }}>
+        {BOTTOM_NAV_ITEMS.map(({ id, shortLabel = '', icon: Icon }) => {
           const isActive = active === id;
           return (
-            <button key={id} ref={el => { btnRefs.current[id] = el; }} onClick={() => set(id)}
-              style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, padding: '8px 4px 6px', background: 'none', border: 'none', cursor: 'pointer', color: isActive ? '#a5b4fc' : 'rgba(255,255,255,0.38)', transition: 'color 0.15s' }}>
-              <span style={{ width: 30, height: 22, borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? 'rgba(99,102,241,0.3)' : 'transparent' }}>
-                <Icon size={14} color={isActive ? '#a5b4fc' : undefined} className={isActive ? '' : color} />
+            <button key={id} onClick={() => set(id)}
+              style={{
+                flex: 1, minWidth: 0,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 3, padding: '8px 4px 7px',
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: isActive ? '#6366f1' : '#94a3b8',
+                transition: 'color 0.15s',
+              }}>
+              <span style={{
+                width: 32, height: 24, borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: isActive ? '#eef2ff' : 'transparent',
+                transition: 'background 0.15s',
+              }}>
+                <Icon size={16} color={isActive ? '#6366f1' : '#94a3b8'} />
               </span>
-              <span style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{shortLabel || id}</span>
+              <span style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: '0.03em',
+                textTransform: 'uppercase', whiteSpace: 'nowrap',
+                color: isActive ? '#6366f1' : '#94a3b8',
+              }}>{shortLabel || id}</span>
             </button>
           );
         })}

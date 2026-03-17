@@ -87,7 +87,7 @@ export default function FinanceTab({
         {/* Debt filters inline */}
         {finSub === 'debt' && (<>
           <span style={{ width: 1, height: 22, background: '#e2e8f0', flexShrink: 0 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 10px', border: '1px solid #e2e8f0', background: 'white', flex: 1, maxWidth: 200 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 10px', border: '1px solid #e2e8f0', background: 'white', borderRadius: 8, flex: 1, maxWidth: 200 }}>
             <Search size={12} color="#94a3b8" />
             <input value={qF} onChange={e => { setQF(e.target.value); setPgF(1); }} placeholder="Tìm tên HS..." style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: 12, fontWeight: 600, color: '#0f172a', width: '100%' }} />
           </div>
@@ -132,7 +132,7 @@ export default function FinanceTab({
                     {schoolYearMonths.map(fm => {
                       const isCur = fm.m === curMo && fm.y === curYr;
                       return (
-                        <th key={`${fm.m}-${fm.y}`} style={{ ...TH_SHARED, textAlign: 'center', minWidth: 44, background: isCur ? '#4338ca' : '#1e3a5f', borderLeft: isCur ? '2px solid #818cf8' : undefined, borderRight: isCur ? '2px solid #818cf8' : undefined }}>
+                        <th key={`${fm.m}-${fm.y}`} style={{ ...TH_SHARED, textAlign: 'center', minWidth: 44, background: isCur ? '#EEF2FF' : '#F8FAFC', color: isCur ? '#4F46E5' : '#64748B', borderLeft: isCur ? '2px solid #C7D2FE' : undefined, borderRight: isCur ? '2px solid #C7D2FE' : undefined }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                             <span>{fm.label}</span>
                             {isCur && <span style={{ fontSize: 7, fontWeight: 800, color: '#c7d2fe', background: 'rgba(255,255,255,0.15)', padding: '1px 4px', letterSpacing: '0.1em' }}>NOW</span>}
