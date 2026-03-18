@@ -105,7 +105,7 @@ export function DiaryModal({
               <SBox color="#6366f1" icon={Calendar} title="Thông tin buổi dạy">
                 <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10 }}>
                   <Input label="Ngày dạy" type="date" value={date} onChange={setDate}/>
-                  <Select label="Lớp học" value={classId} onChange={v=>{setClassId(v);if(!editingLog)setAtt({});}} options={classOptions}/>
+                  <Select label="Lớp học" value={classId} onChange={v=>{setClassId(v);setAtt({});}} options={classOptions}/>
                 </div>
                 {/* Ca dạy dùng Select thay RadioGroup để tiết kiệm không gian */}
                 <Select label="Ca dạy *" value={caDay} onChange={setCaDay} options={caOptions}/>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, AlertTriangle } from 'lucide-react';
 import { Button, IconButton, Input, Select } from './dsComponents';
 import { ModalWrap } from './UIComponents';
-import type { Student } from './types';
+import type { Student, ClassRecord } from './types';
 import toast from 'react-hot-toast';
 
 const FS_WRAP: React.CSSProperties = { position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-start',justifyContent:'center',padding:12,overflowY:'auto',background:'rgba(15,23,42,0.65)',backdropFilter:'blur(5px)' };
@@ -11,14 +11,18 @@ const FS_DLG: React.CSSProperties  = { background:'white',width:'100%',maxWidth:
 export function ClassModal({
   open, onClose, editing, isSaving, onSave, uniqueBranches=[], teacherList=[],
 }: {
-  open:boolean; onClose:()=>void; editing:any|null; isSaving:boolean; onSave:(f:any)=>Promise<void>;
+  open:boolean; onClose:()=>void; editing:ClassRecord|null; isSaving:boolean;
+  onSave:(f:ClassRecord)=>Promise<void>;
   uniqueBranches?:string[]; teacherList?:string[];
 }) {
-  const [f,setF]=useState<any>({});
-  useEffect(()=>{ setF(editing??{}); },[editing,open]);
+  const [f, setF] = useState<Partial<ClassRecord>>({});
+  useEffect(()=>{ setF(editing ?? {}); },[editing,open]);
   if(!open) return null;
-  const u=(k:string,v:string)=>setF((p:any)=>({...p,[k]:v}));
-  const handleSave=()=>{ if(!f['Mã Lớp']?.trim()){toast.error('⚠️ Mã lớp không được để trống!');return;} onSave(f); };
+  const u = (k: string, v: string) => setF(p => ({...p, [k]: v}));
+  const handleSave = () => {
+    if(!f['Mã Lớp']?.trim()){ toast.error('⚠️ Mã lớp không được để trống!'); return; }
+    onSave(f as ClassRecord);
+  };
 
   const teacherOptions=[{value:'',label:'Chọn GV'},...(teacherList.length>0?teacherList:['Lê Đức Nhân','Nguyễn Thị Kiên']).map(t=>({value:t,label:t}))];
   const branchOptions=[{value:'',label:'Chọn cơ sở'},...(uniqueBranches.length>0?uniqueBranches.map(b=>({value:b,label:b})):[{value:'Đào Tấn',label:'Đào Tấn'},{value:'Nguyễn Quang Bích',label:'Nguyễn Quang Bích'}])];

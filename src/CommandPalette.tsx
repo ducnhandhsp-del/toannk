@@ -85,7 +85,8 @@ export default function CommandPalette({ open, onClose, commands }: CommandPalet
     el?.scrollIntoView({ block: 'nearest' });
   }, [activeIdx]);
 
-  let globalIdx = -1;
+  /* Flat list để tính index chính xác, không dùng biến mutable trong render */
+  const flatItems = useMemo(() => grouped.flatMap(g => g.items), [grouped]);
 
   if (!open) return null;
 
@@ -136,8 +137,7 @@ export default function CommandPalette({ open, onClose, commands }: CommandPalet
                   {group}
                 </div>
                 {items.map(cmd => {
-                  globalIdx++;
-                  const idx = globalIdx;
+                  const idx = flatItems.indexOf(cmd);
                   const isActive = idx === activeIdx;
                   return (
                     <button

@@ -154,3 +154,15 @@ export interface Material {
   uploadedAt:     string;
   downloadCount?: number;
 }
+
+export interface ClassRecord {
+  'Mã Lớp':    string;
+  'Tên Lớp'?:  string;
+  'Giáo viên'?: string;
+  'Cơ sở'?:    string;
+  'Khối'?:     string;
+  'Buổi 1'?:   string;
+  'Buổi 2'?:   string;
+  'Buổi 3'?:   string;
+  [key: string]: string | undefined;
+}

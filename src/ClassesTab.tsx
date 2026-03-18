@@ -7,18 +7,20 @@ import { Edit3, Clock, Plus, LayoutList, LayoutGrid, X, Users, MapPin, User, Tre
 import { resolveTeacher } from './helpers';
 import { FAB, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
 import { Badge, SearchBar, Select, IconButton, Button } from './dsComponents';
-import type { Student } from './types';
+import type { Student, ClassRecord, TeachingLog } from './types';
 
 interface Props {
-  uClasses: any[]; students: Student[]; tlogs: any[];
+  uClasses: ClassRecord[]; students: Student[]; tlogs: TeachingLog[];
   curMo: number; curYr: number; paidNow: number; paidPct: number;
   qCls: string; setQCls: (v: string) => void;
   fClsTeacher: string; setFClsTeacher: (v: string) => void;
   isPaid: (sid: string, mo: number, yr: number) => boolean;
-  onEditClass: (c: any) => void; onAddClass: () => void; uniqueBranches: string[];
+  onEditClass: (c: ClassRecord) => void; onAddClass: () => void; uniqueBranches: string[];
 }
 
-function ClassDetailModal({ cls, curMo, onClose, onEdit }: { cls: any; curMo: number; onClose: () => void; onEdit: () => void }) {
+function ClassDetailModal({ cls, curMo, onClose, onEdit }: {
+  cls: ClassRecord; curMo: number; onClose: () => void; onEdit: () => void;
+}) {
   return (
     <div style={{ position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center',background:'rgba(15,23,42,0.6)',backdropFilter:'blur(4px)' }}>
       <div style={{ background:'white',width:'100%',maxWidth:520,borderRadius:'16px 16px 0 0',overflow:'hidden',boxShadow:'0 -8px 40px rgba(0,0,0,0.2)',maxHeight:'85dvh',display:'flex',flexDirection:'column' }}>

@@ -10,7 +10,7 @@ import { formatDate, parseDMY } from './helpers';
 import { Badge, Pager, FilterTabs, SearchBar, Select, TableActions } from './dsComponents';
 import { FAB } from './AppComponents';
 import { StatBlock, StatGrid, AppTable, TABLE_WRAP, TH_SHARED, TD_SHARED, trStyle } from './AppComponents';
-import type { Student } from './types';
+import type { Student, TeachingLog, LeaveRequest } from './types';
 
 type Sub = 'diary' | 'schedule' | 'absence';
 const SUBS = [
@@ -96,12 +96,12 @@ function TeacherTimetable({ teacherName, uClasses }: { teacherName: string; uCla
 }
 
 interface Props {
-  filtD: any[]; pgD: number; setPgD: (p: number) => void;
+  filtD: TeachingLog[]; pgD: number; setPgD: (p: number) => void;
   qD: string; setQD: (v: string) => void;
   dCls: string; setDCls: (v: string) => void;
-  uClasses: any[]; IPP: number; students: Student[]; tlogs: any[];
-  leaveRequests: any[];
-  onViewDiary: (log: any) => void; onEditDiary: (log: any) => void; onAddDiary: () => void;
+  uClasses: Record<string, string>[]; IPP: number; students: Student[]; tlogs: TeachingLog[];
+  leaveRequests: LeaveRequest[];
+  onViewDiary: (log: TeachingLog) => void; onEditDiary: (log: TeachingLog) => void; onAddDiary: () => void;
   onApproveLeave: (id: string) => void; onRejectLeave: (id: string) => void;
 }
 

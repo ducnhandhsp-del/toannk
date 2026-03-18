@@ -150,10 +150,32 @@ export default function MaterialsTab({ materials, uClasses, onSave, onDelete, is
   const [showModal,setShowModal]=useState(false);
   const [editing,setEditing]=useState<Material|null>(null);
   const [filterGrade,setFilterGrade]=useState('');
+  const [filterClass,setFilterClass]=useState('');
 
-  const byGrade=useMemo(()=>{ const map:Record<string,Material[]>={}; GRADES.forEach(g=>{map[g]=[];}); materials.forEach(m=>{const g=m.grade||'Tổng hợp';if(!map[g])map[g]=[];map[g].push(m);}); return map; },[materials]);
+  /* Filter theo cả grade và classId */
+  const filteredMaterials = useMemo(()=>{
+    let list = materials;
+    if (filterClass) list = list.filter(m => m.classId === filterClass);
+    return list;
+  }, [materials, filterClass]);
+
+  const byGrade=useMemo(()=>{
+    const map:Record<string,Material[]>={};
+    GRADES.forEach(g=>{map[g]=[];});
+    filteredMaterials.forEach(m=>{const g=m.grade||'Tổng hợp';if(!map[g])map[g]=[];map[g].push(m);});
+    return map;
+  },[filteredMaterials]);
+
   const totalDownloads=materials.reduce((s,m)=>s+(m.downloadCount||0),0);
   const gradesToShow=filterGrade?[filterGrade]:GRADES;
+
+  /* Class filter options — chỉ hiện lớp có học liệu */
+  const classOptions = useMemo(()=>[
+    { value:'', label:'Tất cả lớp' },
+    ...uClasses
+      .filter(c => materials.some(m => m.classId === c['Mã Lớp']))
+      .map(c => ({ value: c['Mã Lớp'], label: `Lớp ${c['Mã Lớp']}` })),
+  ], [uClasses, materials]);
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
@@ -163,33 +185,45 @@ export default function MaterialsTab({ materials, uClasses, onSave, onDelete, is
         <h2 style={{ fontSize:22,fontWeight:800,color:'#0f172a',textTransform:'uppercase',letterSpacing:'0.04em',margin:0,flexShrink:0 }}>Học liệu</h2>
         <span style={{ width:1,height:22,background:'#e2e8f0',flexShrink:0 }}/>
         <div style={{ display:'flex',gap:6,flexWrap:'wrap',alignItems:'center' }}>
-          <FilterChip label={`Tất cả (${materials.length})`} active={filterGrade===''} onClick={()=>setFilterGrade('')} color="emerald"/>
+          <FilterChip label={`Tất cả (${filteredMaterials.length})`} active={filterGrade===''} onClick={()=>setFilterGrade('')} color="emerald"/>
           {GRADES.map(g=><FilterChip key={g} label={`${g==='Tổng hợp'?g:`Khối ${g}`} (${byGrade[g]?.length||0})`} active={filterGrade===g} onClick={()=>setFilterGrade(g===filterGrade?'':g)} color="teal"/>)}
         </div>
+        {/* Filter theo lớp — chỉ hiện nếu có lớp nào có học liệu */}
+        {classOptions.length > 1 && (
+          <select
+            value={filterClass}
+            onChange={e=>setFilterClass(e.target.value)}
+            style={{ padding:'5px 10px',borderRadius:7,border:'1.5px solid #e2e8f0',fontSize:12,fontWeight:600,color:'#475569',background:'white',cursor:'pointer',outline:'none' }}
+          >
+            {classOptions.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        )}
         <span style={{ marginLeft:'auto',fontSize:12,fontWeight:600,color:'#94a3b8' }}>{totalDownloads} lượt xem</span>
       </div>
 
       {/* Stats */}
       <HStatGrid>
         {Object.entries(TYPE_CFG).slice(0,4).map(([k,v])=>{
-          const cnt=materials.filter(m=>m.type===k).length;
+          const cnt=filteredMaterials.filter(m=>m.type===k).length;
           const grads:Record<string,string>={ document:'linear-gradient(135deg,#2563eb,#1d4ed8)', image:'linear-gradient(135deg,#10b981,#059669)', video:'linear-gradient(135deg,#e11d48,#be123c)', exam:'linear-gradient(135deg,#7c3aed,#6d28d9)' };
           return <HStatCard key={k} icon={v.icon} value={cnt} label={v.label} sub="tài liệu" gradient={grads[k]||'linear-gradient(135deg,#64748b,#475569)'}/>;
         })}
       </HStatGrid>
 
       {/* Empty state */}
-      {materials.length===0&&(
+      {filteredMaterials.length===0&&(
         <div style={{ border:'2px dashed #e2e8f0', borderRadius:8, padding:'48px 24px', textAlign:'center' }}>
           <div style={{ fontSize:48,marginBottom:16 }}>📚</div>
-          <h3 style={{ fontSize:17,fontWeight:700,color:'#0f172a',margin:'0 0 8px' }}>Chưa có học liệu nào</h3>
+          <h3 style={{ fontSize:17,fontWeight:700,color:'#0f172a',margin:'0 0 8px' }}>
+            {filterClass ? `Chưa có học liệu cho lớp ${filterClass}` : 'Chưa có học liệu nào'}
+          </h3>
           <p style={{ fontSize:13,color:'#94a3b8',margin:'0 0 20px' }}>Thêm tài liệu, đề thi, video bài giảng để chia sẻ với học sinh</p>
           <Button intent="success" icon={<Plus size={14}/>} onClick={()=>{setEditing(null);setShowModal(true);}}>Thêm học liệu đầu tiên</Button>
         </div>
       )}
 
       {/* Grade sections */}
-      {materials.length>0&&gradesToShow.map(grade=>(
+      {filteredMaterials.length>0&&gradesToShow.map(grade=>(
         <GradeSection key={grade} grade={grade} materials={byGrade[grade]||[]} onEdit={m=>{setEditing(m);setShowModal(true);}} onDelete={onDelete}/>
       ))}
 

@@ -388,3 +388,32 @@ export const getCacheSize = (): string => {
     return formatBytes(new Blob([val]).size);
   } catch { return '—'; }
 };
+
+/**
+ * loadLocal<T> — đọc dữ liệu từ localStorage an toàn.
+ * Trả về fallback nếu key không tồn tại hoặc JSON parse lỗi.
+ *
+ * Dùng cho: ltn-teachers, ltn-materials, ltn-leaves
+ * (các domain chưa có GAS sheet riêng, bridge bằng localStorage)
+ */
+export const loadLocal = <T>(key: string, fallback: T): T => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+/**
+ * saveLocal — ghi dữ liệu vào localStorage an toàn.
+ * Silent fail nếu storage đầy hoặc bị block (private mode).
+ */
+export const saveLocal = (key: string, data: unknown): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    // Storage full hoặc bị block — không crash app
+  }
+};

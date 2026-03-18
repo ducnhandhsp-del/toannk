@@ -23,7 +23,8 @@ export const NAV_ITEMS: {
 // Bottom nav chỉ hiển thị 5 tab quan trọng nhất trên mobile
 export const BOTTOM_NAV_IDS: Screen[] = ['operations','materials','finance','reports','settings'];
 
-function useIsDesktop() {
+// Export để App.tsx gọi 1 lần duy nhất, truyền xuống props
+export function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth >= 768 : true
   );
@@ -144,10 +145,9 @@ const SidebarContent = memo(({
   </div>
 ));
 
-export const Sidebar = memo(({ active, set, centerName }: {
-  active: Screen; set: (s: Screen) => void; centerName: string;
+export const Sidebar = memo(({ active, set, centerName, isDesktop }: {
+  active: Screen; set: (s: Screen) => void; centerName: string; isDesktop: boolean;
 }) => {
-  const isDesktop = useIsDesktop();
   const [collapsed, setCollapsed] = useState(true);
   const w = collapsed ? W_COLLAPSED : W_EXPANDED;
 
@@ -181,10 +181,9 @@ export const Sidebar = memo(({ active, set, centerName }: {
   );
 });
 
-export const MobileHeader = memo(({ active, set, centerName }: {
-  active: Screen; set: (s: Screen) => void; centerName: string;
+export const MobileHeader = memo(({ active, set, centerName, isDesktop }: {
+  active: Screen; set: (s: Screen) => void; centerName: string; isDesktop: boolean;
 }) => {
-  const isDesktop = useIsDesktop();
   const [open, setOpen] = useState(false);
   if (isDesktop) return null;
   const currentItem = NAV_ITEMS.find(n => n.id === active);
@@ -222,8 +221,9 @@ const BOTTOM_NAV_ITEMS = NAV_ITEMS.filter(n =>
   ['operations','materials','finance','reports','settings'].includes(n.id)
 );
 
-export const BottomNav = memo(({ active, set }: { active: Screen; set: (s: Screen) => void }) => {
-  const isDesktop = useIsDesktop();
+export const BottomNav = memo(({ active, set, isDesktop }: {
+  active: Screen; set: (s: Screen) => void; isDesktop: boolean;
+}) => {
   if (isDesktop) return null;
   return (
     <>

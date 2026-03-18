@@ -18,10 +18,11 @@ const DIALOG_STYLE: React.CSSProperties = {
 };
 
 export function StudentModal({
-  open, onClose, editing, uniqueClasses, uniqueBranches, isSaving, onSave,
+  open, onClose, editing, uniqueClasses, uniqueBranches, isSaving, onSave, existingIds = [],
 }: {
   open:boolean; onClose:()=>void; editing:Student|null;
   uniqueClasses:any[]; uniqueBranches:string[]; isSaving:boolean; onSave:(f:any)=>Promise<void>;
+  existingIds?: string[];
 }) {
   const defaultBranch = uniqueBranches[0] || 'Đào Tấn';
   const [f,setF]       = useState<any>({});
@@ -38,6 +39,7 @@ export function StudentModal({
     const normalId = rawId.replace(/\s+/g,'');
     if(!normalId) err.id='Mã HS không được để trống';
     else if(!/^[A-Z0-9_\-]+$/i.test(normalId)) err.id='Chỉ chứa chữ, số, gạch ngang';
+    else if(!editing && existingIds.includes(normalId)) err.id='Mã HS đã tồn tại trong hệ thống';
     if(!f.name?.trim()) err.name='Họ và tên không được để trống';
     else if(f.name.trim().length<3) err.name='Ít nhất 3 ký tự';
     if(f.parentPhone&&!isValidPhone(f.parentPhone)) err.parentPhone='SĐT không hợp lệ';
